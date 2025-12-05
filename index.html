@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spotlight Test | Unforgettable Pilot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0a0a0f;
+            --champagne: #f4e4ba;
+            --gold: #d4af37;
+            --pearl: #fefefe;
+            --graphite: #2d2d2d;
+            --rose-gold: #b76e79;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--midnight);
+            color: var(--pearl);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Cinematic Intro */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Glass morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--champagne) 0%, var(--gold) 50%, var(--champagne) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Scenario cards */
+        .scenario-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(244, 228, 186, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .scenario-card:hover::before {
+            left: 100%;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            border-color: var(--gold);
+        }
+        
+        /* Choice buttons */
+        .choice-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--champagne) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .choice-btn:hover::after {
+            opacity: 0.1;
+        }
+        
+        .choice-btn.selected {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--champagne) 100%);
+            color: var(--midnight);
+            transform: scale(1.05);
+        }
+        
+        .choice-btn.correct {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            animation: pulse 0.5s ease;
+        }
+        
+        .choice-btn.incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            animation: shake 0.4s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        /* Score display */
+        .score-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold) 0deg, var(--champagne) 180deg, var(--graphite) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .score-ring::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: var(--midnight);
+        }
+        
+        /* Gender badges */
+        .gender-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .badge-male {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            color: white;
+        }
+        
+        .badge-female {
+            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            color: white;
+        }
+        
+        /* Progress dots */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--gold);
+            width: 24px;
+            border-radius: 5px;
+        }
+        
+        .progress-dot.completed {
+            background: #10b981;
+        }
+        
+        /* Social share buttons */
+        .share-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .scenario-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cinematic Intro -->
+    <div id="introScreen" class="intro-screen">
+        <div class="text-center animate-fade-in-up">
+            <div class="text-gold text-xs tracking-[0.3em] mb-4">FORTEEN STUDIOS PRESENTS</div>
+            <h1 class="text-6xl md:text-8xl font-display font-bold gradient-text mb-6">
+                UNFORGETTABLE
+            </h1>
+            <div class="text-gray-400 text-sm mb-8">PILOT EPISODE</div>
+            <button onclick="startPilot()" class="px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105">
+                BEGIN THE TEST ✨
+            </button>
+            <div class="mt-8 text-xs text-gray-500">7 minutes • Interactive • Mobile Optimized</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="py-6 px-4 backdrop-blur-lg bg-black/30 sticky top-0 z-50 border-b border-white/10">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div>
+                    <div class="text-gold text-[10px] tracking-[0.3em] mb-1">FORTEEN STUDIOS</div>
+                    <div class="font-display text-lg font-bold">Unforgettable</div>
+                </div>
+                <div id="scoreDisplay" class="text-right">
+                    <div class="text-2xl font-bold text-gold">0</div>
+                    <div class="text-xs text-gray-400">POINTS</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress -->
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div id="progressDots" class="progress-dots"></div>
+        </div>
+
+        <!-- Content Area -->
+        <main id="contentArea" class="max-w-6xl mx-auto px-4 py-8 pb-20">
+            <!-- Dynamic content loads here -->
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            currentScenario: 0,
+            score: 0,
+            answers: [],
+            startTime: Date.now(),
+            shuffledChoices: {} // Store shuffled order for each scenario
+        };
+
+        // ============================================
+        // SCENARIOS DATA
+        // ============================================
+        const scenarios = [
+            {
+                id: 'charity_gala_female',
+                gender: 'female',
+                icon: '✨',
+                title: 'The Green Room Moment',
+                context: 'You\'re Maya, a volunteer coordinator at a Mumbai charity gala. Deepika Padukone just arrived 20 minutes early. Your supervisor asks you to escort her to the green room.',
+                question: 'As you walk together, she comments: "These events can be exhausting." You have 10 seconds to respond before her PR team arrives.',
+                situation: 'She\'s making polite conversation. This could be your only exchange. How do you respond without being awkward or overly familiar?',
+                choices: [
+                    {
+                        text: 'Agree enthusiastically: "Oh my god, yes! I\'m such a huge fan. Can we take a selfie?"',
+                        correct: false,
+                        feedback: 'This crosses professional boundaries. She was sharing a human moment, not inviting fandom. Celebrities appreciate being treated as people, not photo opportunities, especially in private moments.',
+                        points: 0
+                    },
+                    {
+                        text: 'Acknowledge with empathy: "I can imagine. We\'ve kept the green room quiet and have fresh coffee ready for you."',
+                        correct: true,
+                        feedback: 'Perfect! You validated her feeling, stayed professional, and showed thoughtfulness. This is how publicists and high-level assistants interact—anticipating needs without overstepping. Deepika would remember this as graceful.',
+                        points: 25
+                    },
+                    {
+                        text: 'Deflect awkwardly: "Haha, yeah..." then go silent and stare at your phone',
+                        correct: false,
+                        feedback: 'The silence reads as discomfort. She extended conversational olive branch—ignoring it feels dismissive. Even brief exchanges deserve engaged presence, especially with someone who took a risk being vulnerable.',
+                        points: 0
+                    }
+                ],
+                proTip: 'When celebrities or VIPs make casual remarks, they\'re testing if you can hold space without getting weird. Respond to the human, not the persona.'
+            },
+            {
+                id: 'tech_conference_male',
+                gender: 'male',
+                icon: '☕',
+                title: 'The Coffee Bar Encounter',
+                context: 'You\'re Arjun, a mid-level product manager at Google I/O. Sundar Pichai is at the coffee bar, alone, waiting for his espresso. His handlers are 20 feet away, distracted.',
+                question: 'You have literally 15 seconds. Do you approach?',
+                situation: 'This could change your career trajectory. Or make you "that guy." The line between bold and cringe is thin.',
+                choices: [
+                    {
+                        text: 'Launch your elevator pitch: "Mr. Pichai, I have an AI idea that could revolutionize search—"',
+                        correct: false,
+                        feedback: 'Ambushing executives with pitches at coffee bars is career suicide. They hear this 50 times a day. Sundar Pichai values thoughtfulness—this approach demonstrates the opposite. You\'d be remembered, but not positively.',
+                        points: 0
+                    },
+                    {
+                        text: 'Make brief, respectful contact: "Mr. Pichai, I\'m Arjun from the Android team. Just wanted to say—your keynote resonated. Thank you."',
+                        correct: true,
+                        feedback: 'Masterclass in executive approach! Brief, specific, no ask. You\'re making a deposit, not a withdrawal. If he engages further, great. If not, you left a positive impression. This is exactly how VPs network internally at Google.',
+                        points: 30
+                    },
+                    {
+                        text: 'Do nothing. He\'s too important. You\'re too junior. Walk away.',
+                        correct: false,
+                        feedback: 'Calculated confidence is expected at this level. Sundar started as an engineer—he values initiative. Missing this moment means wondering "what if?" forever. The respectful approach (choice B) would have been welcomed.',
+                        points: 0
+                    }
+                ],
+                proTip: 'Approaching senior leaders: Be brief, be specific, offer value (even just genuine appreciation), and always give them an exit. Never pitch. Never block their path.'
+            },
+            {
+                id: 'talk_show_female',
+                gender: 'female',
+                icon: '🎙️',
+                title: 'The Hot Seat',
+                context: 'You\'re Priya, a tech CEO, appearing on a prime-time talk show. The host just asked an unexpectedly personal question about your recent divorce in front of a live studio audience.',
+                question: '"Your divorce made headlines. Do you regret putting your career before your marriage?"',
+                situation: 'The audience is silent. The camera is tight on your face. Your response will trend on Twitter. How do you maintain composure while reclaiming control?',
+                choices: [
+                    {
+                        text: 'Look hurt and say: "I don\'t think that\'s appropriate to discuss here."',
+                        correct: false,
+                        feedback: 'Showing visible discomfort gives them exactly the clip they want. You knew this topic might come up when you said yes to the show. Avoidance reads as defensiveness and inability to handle pressure—not CEO qualities.',
+                        points: 0
+                    },
+                    {
+                        text: 'Pause 2 seconds, maintain eye contact, respond: "That\'s a reductive framing. Let me share what I actually learned..."',
+                        correct: true,
+                        feedback: 'Masterclass! You didn\'t dodge, didn\'t get defensive, and you reframed gracefully. The pause showed control. This is exactly how Indra Nooyi, Sheryl Sandberg, and Priyanka Chopra handle ambush questions—acknowledge, redirect, educate on YOUR terms.',
+                        points: 30
+                    },
+                    {
+                        text: 'Laugh nervously and deflect: "Haha, can we talk about my company instead?"',
+                        correct: false,
+                        feedback: 'The nervous laugh undermines your authority. Great leaders address tough questions head-on with grace. Priyanka Chopra never dodges—she controls the narrative. Your deflection just made the question bigger than it was.',
+                        points: 0
+                    }
+                ],
+                proTip: 'When blindsided on camera: Pause (shows control) → Reframe the question → Answer YOUR question, not theirs. The pause is your power move—it converts ambush to conversation.'
+            },
+            {
+                id: 'gala_male',
+                gender: 'male',
+                icon: '🎩',
+                title: 'The Ambani Gala',
+                context: 'You\'re Kabir, a young entrepreneur, invited to a Mukesh Ambani charity gala. Black tie. You\'re standing near the bar when Ratan Tata walks past with an aide.',
+                question: 'You\'ve wanted to meet him for years. This is your 5-second window. What do you do?',
+                situation: 'He\'s 10 feet away, walking slowly. Other guests are around. Your move could open doors—or close them forever.',
+                choices: [
+                    {
+                        text: 'Do nothing. He\'s too senior to approach. Wait and hope for a better moment.',
+                        correct: false,
+                        feedback: 'You\'ll regret this forever. Calculated confidence is expected at this level. Even Ritesh Agarwal (OYO) and Bhavish Aggarwal (Ola) started by respectfully approaching seniors. Paralysis helps no one. The respectful approach (choice C) would have been welcomed.',
+                        points: 0
+                    },
+                    {
+                        text: 'Approach directly, extend hand for handshake, launch into: "Mr. Tata, I run a SaaS startup. Could I get 2 minutes to tell you about it?"',
+                        correct: false,
+                        feedback: 'Ambushing at galas is career suicide. He\'ll politely disengage and remember you as "that aggressive guy." This isn\'t Shark Tank—this is his personal time at a social event. Read the room. Even Anand Mahindra would cringe at this approach.',
+                        points: 0
+                    },
+                    {
+                        text: 'Make brief eye contact, slight nod of respect. If he acknowledges, say: "Mr. Tata, huge admirer. May I have 30 seconds sometime this evening?"',
+                        correct: true,
+                        feedback: 'Perfect execution! Respectful, brief, and gives him control. This is exactly how Harsh Goenka and Anand Mahindra network at elite events—never cornering, always offering escape routes. High-status people appreciate brevity and respect for their autonomy.',
+                        points: 25
+                    }
+                ],
+                proTip: 'Elite networking formula: Make eye contact → Brief respectful introduction → Ask for permission (not time) → Accept any response gracefully. Never pitch at galas. Ever.'
+            }
+        ];
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        
+        // Fisher-Yates shuffle algorithm for proper randomization
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Shuffle choices and track correct answer index
+        function getShuffledChoices(scenarioId) {
+            // If already shuffled for this scenario, return cached version
+            if (state.shuffledChoices[scenarioId]) {
+                return state.shuffledChoices[scenarioId];
+            }
+
+            const scenario = scenarios.find(s => s.id === scenarioId);
+            const originalChoices = scenario.choices;
+            
+            // Find original correct index
+            const correctChoiceIndex = originalChoices.findIndex(c => c.correct);
+            
+            // Create array with index tracking
+            const indexedChoices = originalChoices.map((choice, idx) => ({
+                ...choice,
+                originalIndex: idx
+            }));
+            
+            // Shuffle
+            const shuffled = shuffleArray(indexedChoices);
+            
+            // Find new position of correct answer
+            const newCorrectIndex = shuffled.findIndex(c => c.originalIndex === correctChoiceIndex);
+            
+            // Cache the result
+            state.shuffledChoices[scenarioId] = {
+                choices: shuffled,
+                correctIndex: newCorrectIndex
+            };
+            
+            return state.shuffledChoices[scenarioId];
+        }
+
+        // ============================================
+        // SOUND EFFECTS
+        // ============================================
+        const sounds = {
+            correct: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+            },
+            incorrect: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/142/142608_2615119-lq.mp3');
+                audio.volume = 0.2;
+                audio.play().catch(() => {});
+            },
+            complete: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/270/270402_5123851-lq.mp3');
+                audio.volume = 0.4;
+                audio.play().catch(() => {});
+            }
+        };
+
+        // ============================================
+        // CONFETTI
+        // ============================================
+        function triggerConfetti() {
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#d4af37', '#f4e4ba', '#ffffff']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#d4af37', '#f4e4ba', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function startPilot() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            renderProgressDots();
+            renderScenario();
+        }
+
+        function renderProgressDots() {
+            const dots = scenarios.map((_, idx) => {
+                let className = 'progress-dot';
+                if (idx === state.currentScenario) className += ' active';
+                if (idx < state.currentScenario) className += ' completed';
+                return `<div class="${className}"></div>`;
+            }).join('');
+            
+            document.getElementById('progressDots').innerHTML = dots;
+        }
+
+        function updateScore(points) {
+            state.score += points;
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = state.score;
+        }
+
+        // ============================================
+        // SCENARIO RENDERING
+        // ============================================
+        function renderScenario() {
+            if (state.currentScenario >= scenarios.length) {
+                renderResults();
+                return;
+            }
+
+            const scenario = scenarios[state.currentScenario];
+            const genderBadge = scenario.gender === 'male' 
+                ? '<span class="gender-badge badge-male">♂ MALE SCENARIO</span>'
+                : '<span class="gender-badge badge-female">♀ FEMALE SCENARIO</span>';
+
+            // Get shuffled choices
+            const { choices, correctIndex } = getShuffledChoices(scenario.id);
+
+            const content = `
+                <div class="animate-fade-in-up">
+                    <!-- Scenario Header -->
+                    <div class="text-center mb-8">
+                        <div class="text-6xl mb-4">${scenario.icon}</div>
+                        ${genderBadge}
+                        <h2 class="text-4xl md:text-5xl font-display font-bold mt-4 mb-2 gradient-text">
+                            ${scenario.title}
+                        </h2>
+                    </div>
+
+                    <!-- Scenario Card -->
+                    <div class="glass rounded-3xl p-8 md:p-12 mb-8 border border-white/10">
+                        <div class="mb-6">
+                            <div class="text-sm text-gold mb-2 tracking-wider">CONTEXT</div>
+                            <p class="text-lg text-gray-300 leading-relaxed">${scenario.context}</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="text-sm text-gold mb-2 tracking-wider">THE MOMENT</div>
+                            <p class="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+                                "${scenario.question}"
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-rose-gold">
+                            <div class="text-sm text-rose-gold mb-1 tracking-wider">THE PRESSURE</div>
+                            <p class="text-gray-300">${scenario.situation}</p>
+                        </div>
+                    </div>
+
+                    <!-- Choices -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-center">What would you do?</h3>
+                        <div class="space-y-4" id="choicesContainer">
+                            ${choices.map((choice, displayIdx) => `
+                                <button 
+                                    onclick="handleChoice(${displayIdx}, ${correctIndex})"
+                                    class="choice-btn w-full text-left p-6 rounded-2xl border-2 border-white/20 hover:border-gold transition-all"
+                                    data-display-idx="${displayIdx}"
+                                    data-original-idx="${choice.originalIndex}"
+                                >
+                                    <div class="flex items-start gap-4">
+                                        <div class="text-2xl font-bold text-gold">${String.fromCharCode(65 + displayIdx)}</div>
+                                        <div class="flex-1 text-gray-200">${choice.text}</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Feedback Area -->
+                    <div id="feedbackArea" class="hidden"></div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // ============================================
+        // CHOICE HANDLING
+        // ============================================
+        function handleChoice(selectedDisplayIdx, correctDisplayIdx) {
+            const scenario = scenarios[state.currentScenario];
+            const { choices } = getShuffledChoices(scenario.id);
+            const selectedChoice = choices[selectedDisplayIdx];
+            const isCorrect = selectedDisplayIdx === correctDisplayIdx;
+            
+            const buttons = document.querySelectorAll('.choice-btn');
+            
+            // Disable all buttons
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            // Mark correct/incorrect
+            buttons.forEach((btn, idx) => {
+                if (idx === selectedDisplayIdx) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (idx === correctDisplayIdx) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            // Play sound
+            if (isCorrect) {
+                sounds.correct();
+                updateScore(selectedChoice.points);
+                if (selectedChoice.points >= 30) {
+                    setTimeout(triggerConfetti, 500);
+                }
+            } else {
+                sounds.incorrect();
+            }
+
+            // Store answer
+            state.answers.push({
+                scenarioId: scenario.id,
+                selectedDisplayIdx: selectedDisplayIdx,
+                correct: isCorrect,
+                points: selectedChoice.points
+            });
+
+            // Show feedback
+            setTimeout(() => {
+                showFeedback(selectedChoice, scenario.proTip);
+            }, 800);
+        }
+
+        function showFeedback(choice, proTip) {
+            const feedbackHTML = `
+                <div class="animate-fade-in-up glass rounded-3xl p-8 border ${choice.correct ? 'border-green-500/50' : 'border-red-500/50'} mb-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="text-4xl">${choice.correct ? '✓' : '✗'}</div>
+                        <div class="flex-1">
+                            <h4 class="text-xl font-bold mb-2 ${choice.correct ? 'text-green-400' : 'text-red-400'}">
+                                ${choice.correct ? 'Excellent Choice!' : 'Not Quite...'}
+                            </h4>
+                            <p class="text-gray-300 leading-relaxed">${choice.feedback}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gold/10 rounded-xl p-4 border-l-4 border-gold mb-6">
+                        <div class="text-sm text-gold mb-2 tracking-wider">💎 PRO TIP</div>
+                        <p class="text-gray-300 text-sm">${proTip}</p>
+                    </div>
+
+                    <div class="text-center">
+                        <button 
+                            onclick="nextScenario()"
+                            class="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-bold hover:opacity-90 transition-all hover:scale-105"
+                        >
+                            ${state.currentScenario < scenarios.length - 1 ? 'Next Scenario →' : 'See Results ✨'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('feedbackArea').innerHTML = feedbackHTML;
+            document.getElementById('feedbackArea').classList.remove('hidden');
+            
+            // Smooth scroll to feedback
+            document.getElementById('feedbackArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextScenario() {
+            state.currentScenario++;
+            renderProgressDots();
+            renderScenario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // RESULTS
+        // ============================================
+        function renderResults() {
+            const totalPossible = scenarios.reduce((sum, s) => sum + Math.max(...s.choices.map(c => c.points)), 0);
+            const percentage = Math.round((state.score / totalPossible) * 100);
+            const timeSpent = Math.round((Date.now() - state.startTime) / 60000);
+            
+            let rating = '';
+            let ratingColor = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                rating = 'SPOTLIGHT READY';
+                ratingColor = 'text-green-400';
+                message = 'You have exceptional presence instincts. You understand the nuances of high-pressure social situations and know how to navigate them with grace and strategy.';
+            } else if (percentage >= 70) {
+                rating = 'STRONG POTENTIAL';
+                ratingColor = 'text-blue-400';
+                message = 'You have solid instincts, but there\'s room to refine your approach to celebrity encounters and high-stakes moments. With practice, you\'ll be unforgettable.';
+            } else if (percentage >= 50) {
+                rating = 'DEVELOPING';
+                ratingColor = 'text-yellow-400';
+                message = 'You\'re on the right track, but executive presence in elite situations needs deliberate practice. The good news? These skills are completely learnable.';
+            } else {
+                rating = 'OPPORTUNITY AHEAD';
+                ratingColor = 'text-orange-400';
+                message = 'Great awareness is the first step! Navigating celebrity encounters and VIP moments isn\'t innate—it\'s trained. You\'re in the right place to transform.';
+            }
+
+            const content = `
+                <div class="animate-fade-in-up text-center">
+                    <!-- Score Display -->
+                    <div class="mb-8">
+                        <div class="inline-block score-ring mb-6">
+                            <div class="relative z-10 text-center">
+                                <div class="text-4xl font-bold text-gold">${percentage}%</div>
+                                <div class="text-xs text-gray-400">SCORE</div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-5xl font-display font-bold ${ratingColor} mb-4">
+                            ${rating}
+                        </h2>
+                        
+                        <p class="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                            ${message}
+                        </p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-gold">${state.score}</div>
+                            <div class="text-xs text-gray-400 mt-1">POINTS EARNED</div>
+                        </div>
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-gold">${scenarios.length}</div>
+                            <div class="text-xs text-gray-400 mt-1">SCENARIOS</div>
+                        </div>
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-gold">${timeSpent}</div>
+                            <div class="text-xs text-gray-400 mt-1">MINUTES</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Section -->
+                    <div class="glass rounded-3xl p-8 md:p-12 border border-gold/30 mb-8">
+                        <div class="text-gold text-xs tracking-[0.3em] mb-3">THIS WAS JUST THE PILOT</div>
+                        <h3 class="text-3xl md:text-4xl font-display font-bold gradient-text mb-4">
+                            The Full Series Launches Soon
+                        </h3>
+                        <p class="text-gray-300 mb-6 max-w-xl mx-auto">
+                            You just experienced 4 scenarios. <strong>Unforgettable</strong> features <strong>6 complete seasons</strong> 
+                            with 36 episodes covering everything from boardroom body language to red carpet protocols to 
+                            fragrance intelligence.
+                        </p>
+                        
+                        <div class="space-y-4 max-w-md mx-auto mb-8">
+                            <div class="flex items-center gap-3 text-left">
+                                <div class="text-2xl">✨</div>
+                                <div class="text-sm text-gray-300">Interactive scenarios with instant feedback</div>
+                            </div>
+                            <div class="flex items-center gap-3 text-left">
+                                <div class="text-2xl">🎓</div>
+                                <div class="text-sm text-gray-300">Certificates for each completed season</div>
+                            </div>
+                            <div class="flex items-center gap-3 text-left">
+                                <div class="text-2xl">🌍</div>
+                                <div class="text-sm text-gray-300">Global + Indian perspectives blended</div>
+                            </div>
+                            <div class="flex items-center gap-3 text-left">
+                                <div class="text-2xl">⚡</div>
+                                <div class="text-sm text-gray-300">15-minute episodes, no fluff</div>
+                            </div>
+                        </div>
+
+                        <button 
+                            onclick="window.open('https://forteenconsulting.com', '_blank')"
+                            class="px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105 mb-4"
+                        >
+                            Join the Waitlist
+                        </button>
+                        
+                        <div class="text-xs text-gray-500">Season 1 drops January 2025 • Freemium Access</div>
+                    </div>
+
+                    <!-- Share Section -->
+                    <div class="mb-12">
+                        <p class="text-sm text-gray-400 mb-4">Share your results:</p>
+                        <div class="flex gap-4 justify-center flex-wrap">
+                            <button 
+                                onclick="shareLinkedIn()"
+                                class="share-btn px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                            >
+                                <span class="mr-2">💼</span> LinkedIn
+                            </button>
+                            <button 
+                                onclick="shareTwitter()"
+                                class="share-btn px-6 py-3 rounded-full bg-sky-500 text-white font-semibold hover:bg-sky-600 transition"
+                            >
+                                <span class="mr-2">🐦</span> Twitter
+                            </button>
+                            <button 
+                                onclick="copyLink()"
+                                class="share-btn px-6 py-3 rounded-full glass border border-white/20 text-white font-semibold hover:border-gold transition"
+                            >
+                                <span class="mr-2">🔗</span> Copy Link
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Restart -->
+                    <button 
+                        onclick="restartPilot()"
+                        class="text-gray-400 hover:text-gold transition underline text-sm"
+                    >
+                        ← Take the test again
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+            
+            // Play completion sound and confetti
+            sounds.complete();
+            setTimeout(triggerConfetti, 500);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // SOCIAL SHARING
+        // ============================================
+        function shareLinkedIn() {
+            const text = `I just scored ${state.score} points on The Spotlight Test! 🎯
+
+This interactive experience from Forteen Studios tests how you'd handle:
+• Meeting Deepika Padukone backstage
+• Approaching Sundar Pichai at a conference  
+• Crisis management on live TV
+• Elite networking with Ratan Tata
+
+From the series: UNFORGETTABLE
+
+Try it yourself:`;
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            const text = `I just scored ${state.score} points on The Spotlight Test! 🎯\n\nFrom UNFORGETTABLE - the new series from Forteen Studios.\n\nExecutive presence training meets Apple TV quality.\n\nTry it:`;
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied! Share it with your network.');
+            });
+        }
+
+        function restartPilot() {
+            state.currentScenario = 0;
+            state.score = 0;
+            state.answers = [];
+            state.shuffledChoices = {}; // Clear shuffle cache for new randomization
+            state.startTime = Date.now();
+            
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = '0';
+            renderProgressDots();
+            renderScenario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

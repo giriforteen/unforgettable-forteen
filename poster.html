@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unforgettable - Forteen Studios Launch Poster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .poster-container {
+            width: 1080px;
+            height: 1350px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Background Gradient */
+        .poster {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6B0F1A 0%, #B91646 25%, #2D1B3D 50%, #0A4D5C 75%, #1A8B9E 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 60px;
+        }
+
+        /* Animated gradient overlay */
+        .poster::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(26, 139, 158, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(185, 22, 70, 0.2) 0%, transparent 60%);
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Top section */
+        .top-section {
+            margin-bottom: 60px;
+        }
+
+        .eyebrow {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #FFD6D6;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .logo-svg {
+            width: 420px;
+            height: auto;
+            margin: 0 auto 20px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            font-weight: 300;
+            color: #FFE5CC;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+
+        /* Middle section - Hero */
+        .hero-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 60px 50px;
+            margin: 40px 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .series-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #FFFFFF;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .series-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 68px;
+            font-weight: 900;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            letter-spacing: -2px;
+        }
+
+        .series-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1ADFB8;
+            margin-bottom: 35px;
+            letter-spacing: 0.5px;
+        }
+
+        .pilot-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: rgba(26, 223, 184, 0.15);
+            border: 2px solid #1ADFB8;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1ADFB8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .pilot-badge::before {
+            content: '▶';
+            font-size: 14px;
+        }
+
+        /* Features grid */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD6D6;
+            line-height: 1.5;
+        }
+
+        /* Bottom section */
+        .bottom-section {
+            margin-top: 50px;
+        }
+
+        .announcement {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FF8E53;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .launch-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .launch-details {
+            font-size: 16px;
+            font-weight: 500;
+            color: #B8E6FF;
+            letter-spacing: 0.5px;
+        }
+
+        /* Decorative elements */
+        .corner-decoration {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+        }
+
+        .corner-decoration.top-left {
+            top: -100px;
+            left: -100px;
+            background: #FF6B6B;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: -100px;
+            right: -100px;
+            background: #1ADFB8;
+        }
+
+        /* Glow effects */
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(255, 107, 107, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(26, 223, 184, 0.2) 0%, transparent 40%);
+            mix-blend-mode: screen;
+        }
+
+        /* Copyright */
+        .copyright {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            z-index: 3;
+        }
+
+        /* Responsive adjustments for display */
+        @media (max-width: 1200px) {
+            .poster-container {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4/5;
+            }
+            
+            .poster {
+                padding: 50px 40px;
+            }
+            
+            .logo-svg {
+                width: 320px;
+            }
+            
+            .series-title {
+                font-size: 52px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .poster-container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="poster-container">
+        <div class="poster">
+            <!-- Decorative elements -->
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+            <div class="glow"></div>
+
+            <!-- Top section -->
+            <div class="content top-section">
+                <div class="eyebrow">Introducing</div>
+                
+                <!-- Logo SVG -->
+                <svg class="logo-svg" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+                    <text x="800" y="380" text-anchor="middle" font-family="Playfair Display" font-weight="900" font-size="160" fill="#F4F0E6">FORTEEN</text>
+                    <text x="800" y="520" text-anchor="middle" font-family="Inter" font-weight="600" font-size="90" letter-spacing="10" fill="#F4F0E6">STUDIOS</text>
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0" x2="1" y1="0" y2="0">
+                            <stop offset="0%" stop-color="#E43140"/>
+                            <stop offset="50%" stop-color="#8B2C92"/>
+                            <stop offset="100%" stop-color="#1A8B9E"/>
+                        </linearGradient>
+                    </defs>
+                    <line x1="450" y1="600" x2="1150" y2="600" stroke="url(#logoGrad)" stroke-width="12"/>
+                </svg>
+                
+                <p class="tagline">Where Professionals Become Unforgettable</p>
+            </div>
+
+            <!-- Hero section -->
+            <div class="hero-section">
+                <div class="series-badge">Forteen Original Series</div>
+                <h2 class="series-title">UNFORGETTABLE</h2>
+                <p class="series-subtitle">Executive Presence Training Reimagined</p>
+                
+                <div class="pilot-badge">Pilot Available Now</div>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-text">Interactive<br>Scenarios</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🌍</div>
+                        <div class="feature-text">Global +<br>Indian Blend</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-text">15-Minute<br>Episodes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom section -->
+            <div class="content bottom-section">
+                <div class="announcement">Season 1 Premieres</div>
+                <div class="launch-date">January 2025</div>
+                <div class="launch-details">6 Episodes • Freemium Access • Certificates</div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="copyright">© 2025 Forteen Studios • All Rights Reserved</div>
+        </div>
+    </div>
+
+    <script>
+        // Add some subtle animation on load
+        window.addEventListener('load', () => {
+            document.querySelector('.poster').style.opacity = '0';
+            document.querySelector('.poster').style.transform = 'scale(0.95)';
+            document.querySelector('.poster').style.transition = 'all 0.8s ease';
+            
+            setTimeout(() => {
+                document.querySelector('.poster').style.opacity = '1';
+                document.querySelector('.poster').style.transform = 'scale(1)';
+            }, 100);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Forteen Studios Launch Poster loaded successfully!');
+            console.log('To save: Right-click and "Save Image As..." or take a screenshot (F11 for fullscreen)');
+        });
+    </script>
+</body>
+</html>
