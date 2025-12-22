@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<!--
+    UNFORGETTABLE: Episode 4 - The Voice of Authority
+    Copyright © 2025 Forteen Consulting. All Rights Reserved.
+    
+    IMPORTANT LEGAL NOTICE:
+    This content, including all scenarios, questions, feedback, research citations,
+    and interactive elements, is proprietary to Forteen Consulting.
+    
+    Unauthorized copying, distribution, modification, or use of this content
+    for commercial purposes is strictly prohibited without written permission.
+    
+    License: All Rights Reserved
+    Contact: girish@forteen.in
+    Website: https://forteenconsulting.com
+    
+    For licensing inquiries, please contact us directly.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode 4: The Voice of Authority | Unforgettable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #1a2332;
+            --navy-medium: #2d3e50;
+            --crimson: #8b1e3f;
+            --crimson-light: #b8385e;
+            --bronze: #b87333;
+            --bronze-light: #d4965a;
+            --cream: #f4f1ea;
+            --success: #2d7a4f;
+            --error: #c1404a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--navy-deep);
+            color: var(--cream);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Crimson Pro', serif;
+        }
+        
+        /* Intro Screen */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-medium) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .intro-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+        }
+        
+        .episode-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-light) 100%);
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--cream);
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(139, 30, 63, 0.4);
+        }
+        
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .intro-title {
+            font-size: 64px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--bronze) 0%, var(--bronze-light) 50%, var(--bronze) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+        
+        .intro-subtitle {
+            font-size: 20px;
+            color: var(--bronze-light);
+            font-weight: 600;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+        }
+        
+        .start-btn {
+            padding: 16px 48px;
+            background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-light) 100%);
+            border: none;
+            border-radius: 50px;
+            color: var(--cream);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(139, 30, 63, 0.3);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(139, 30, 63, 0.5);
+        }
+        
+        /* Header */
+        .header {
+            padding: 24px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(26, 35, 50, 0.8);
+            border-bottom: 1px solid rgba(139, 30, 63, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .score-display {
+            text-align: right;
+        }
+        
+        .score-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--bronze);
+            font-family: 'Crimson Pro', serif;
+        }
+        
+        .score-label {
+            font-size: 11px;
+            color: var(--bronze-light);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        
+        /* Progress Dots */
+        .progress-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(244, 241, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--crimson);
+            width: 28px;
+            border-radius: 5px;
+            box-shadow: 0 0 12px var(--crimson);
+        }
+        
+        .progress-dot.completed {
+            background: var(--success);
+        }
+        
+        /* Main Content */
+        .content-area {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+        
+        /* Scenario Header */
+        .scenario-header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .scenario-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 12px rgba(139, 30, 63, 0.3));
+        }
+        
+        .scenario-title {
+            font-size: 52px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--bronze) 0%, var(--bronze-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+        
+        /* Scenario Card */
+        .scenario-card {
+            background: rgba(45, 62, 80, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 30, 63, 0.2);
+            border-radius: 24px;
+            padding: 48px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .scenario-section {
+            margin-bottom: 32px;
+        }
+        
+        .scenario-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-label {
+            font-size: 11px;
+            color: var(--crimson-light);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        .section-content {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--cream);
+        }
+        
+        .section-highlight {
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            line-height: 1.6;
+        }
+        
+        /* Questions */
+        .question-container {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .question-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 32px;
+            color: var(--bronze-light);
+        }
+        
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .choice-btn {
+            background: rgba(45, 62, 80, 0.6);
+            border: 2px solid rgba(244, 241, 234, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(184, 115, 51, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .choice-btn:hover {
+            transform: translateX(4px);
+            border-color: var(--bronze);
+            background: rgba(45, 62, 80, 0.8);
+        }
+        
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+        
+        .choice-content {
+            display: flex;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        .choice-letter {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--bronze);
+            font-family: 'Crimson Pro', serif;
+            flex-shrink: 0;
+        }
+        
+        .choice-text {
+            flex: 1;
+            font-size: 17px;
+            color: var(--cream);
+            line-height: 1.6;
+        }
+        
+        .choice-btn.correct {
+            background: linear-gradient(135deg, var(--success) 0%, #3d9164 100%);
+            border-color: var(--success);
+            animation: pulseOnce 0.5s ease;
+        }
+        
+        .choice-btn.incorrect {
+            background: linear-gradient(135deg, var(--error) 0%, #d4636b 100%);
+            border-color: var(--error);
+            animation: shake 0.4s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulseOnce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        /* Feedback */
+        .feedback-area {
+            margin-top: 40px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .feedback-card {
+            background: rgba(45, 62, 80, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 32px;
+            border: 2px solid;
+        }
+        
+        .feedback-card.correct {
+            border-color: var(--success);
+        }
+        
+        .feedback-card.incorrect {
+            border-color: var(--error);
+        }
+        
+        .feedback-header {
+            display: flex;
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 24px;
+        }
+        
+        .feedback-icon {
+            font-size: 48px;
+        }
+        
+        .feedback-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .feedback-title.correct {
+            color: #3d9164;
+        }
+        
+        .feedback-title.incorrect {
+            color: #d4636b;
+        }
+        
+        .feedback-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--cream);
+        }
+        
+        .pro-tip-box {
+            background: rgba(184, 115, 51, 0.15);
+            border-left: 4px solid var(--bronze);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+        
+        .pro-tip-label {
+            font-size: 12px;
+            color: var(--bronze-light);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .pro-tip-text {
+            font-size: 15px;
+            color: var(--cream);
+            line-height: 1.6;
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .next-btn, .back-btn {
+            padding: 14px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-light) 100%);
+            color: var(--cream);
+            box-shadow: 0 6px 20px rgba(139, 30, 63, 0.3);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 30, 63, 0.5);
+        }
+        
+        .back-btn {
+            background: rgba(45, 62, 80, 0.8);
+            border: 2px solid var(--bronze);
+            color: var(--bronze-light);
+        }
+        
+        .back-btn:hover {
+            background: rgba(45, 62, 80, 1);
+            border-color: var(--bronze-light);
+        }
+        
+        /* Results */
+        .results-container {
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .results-score {
+            font-size: 80px;
+            font-weight: 900;
+            color: var(--bronze);
+            font-family: 'Crimson Pro', serif;
+            margin-bottom: 16px;
+        }
+        
+        .results-title {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 24px;
+            font-family: 'Crimson Pro', serif;
+        }
+        
+        .results-message {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--cream);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .intro-title {
+                font-size: 42px;
+            }
+            
+            .scenario-title {
+                font-size: 36px;
+            }
+            
+            .scenario-card {
+                padding: 32px 24px;
+            }
+            
+            .choice-btn {
+                padding: 20px;
+            }
+            
+            .results-score {
+                font-size: 60px;
+            }
+            
+            .results-title {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-content">
+            <div class="episode-badge">UNFORGETTABLE • Episode 4</div>
+            <div class="intro-icon">🎙️</div>
+            <h1 class="intro-title">THE VOICE OF<br>AUTHORITY</h1>
+            <p class="intro-subtitle">Master Your Vocal Presence Under Pressure</p>
+            <button onclick="startEpisode()" class="start-btn">
+                Begin Episode 4 ✨
+            </button>
+            <p style="margin-top: 24px; font-size: 13px; color: rgba(244, 241, 234, 0.5);">
+                5 Scenarios • 20 Questions • 110 Points • 12-15 Minutes
+            </p>
+            <p style="margin-top: 32px; font-size: 12px; color: rgba(244, 241, 234, 0.4); max-width: 600px; line-height: 1.5;">
+                <strong style="color: var(--crimson-light);">Privacy:</strong> This is a client-side experience. No data is collected or stored. Your responses remain private on your device.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden" style="min-height: 100vh;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <div style="font-size: 10px; color: var(--crimson-light); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;">FORTEEN STUDIOS</div>
+                    <div style="font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 700; color: var(--bronze);">Episode 4: Voice of Authority</div>
+                </div>
+                <div class="score-display">
+                    <div id="scoreNumber" class="score-number">0</div>
+                    <div class="score-label">POINTS</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress -->
+        <div class="progress-container">
+            <div id="progressDots" class="progress-dots"></div>
+        </div>
+
+        <!-- Content Area -->
+        <main id="contentArea" class="content-area">
+            <!-- Dynamic content loads here -->
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // COPYRIGHT NOTICE
+        // ============================================
+        console.log('%c⚠️ COPYRIGHT NOTICE', 'color: #8b1e3f; font-size: 20px; font-weight: bold;');
+        console.log('%cThis content is protected by copyright.', 'color: #b87333; font-size: 14px;');
+        console.log('%c\nCopyright © 2025 Forteen Consulting. All Rights Reserved.\n', 'color: #d4965a; font-size: 12px;');
+        console.log('%cUnauthorized copying, distribution, modification, or commercial use of this content is strictly prohibited.\n', 'color: #f4f1ea; font-size: 11px;');
+        console.log('%cFor licensing inquiries: girish@forteen.in', 'color: #b87333; font-size: 11px;');
+        console.log('%chttps://forteenconsulting.com\n\n', 'color: #8b1e3f; font-size: 11px;');
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            currentQuestion: 0,
+            score: 0,
+            answers: [],
+            shuffledChoices: {}, // Cache shuffled choices per question
+            answerLocked: false
+        };
+
+        // ============================================
+        // SCENARIOS DATA (All 5 scenarios, 20 questions total)
+        // ============================================
+        const scenarios = [
+            {
+                id: 'unmute_moment',
+                title: 'The Unmute Moment',
+                icon: '📹',
+                context: "You're Sarah, a Marketing Manager at a tech company. Company-wide Zoom call with 150 people. You've been silent for 10 minutes. The CEO just asked: \"Sarah, what's the status on the Q4 campaign?\"",
+                challenge: "Everyone's cameras are on. You can see yourself in the gallery view. Your heart is racing. You need to unmute and deliver a 30-second update—clearly, confidently, without sounding nervous.",
+                questions: [
+                    {
+                        id: 'unmute_q1',
+                        situation: "You hover over the unmute button. Your mind is blank. What do you do?",
+                        choices: [
+                            {
+                                text: "Unmute immediately and start with \"Um, so, like, the campaign is...\"",
+                                correct: false,
+                                feedback: "Starting with filler words signals nervousness to 150 people. Research shows above 5% filler words destroys credibility (Avoma, 2024). That's 3 fillers in 8 words—37%! Even one deep breath before speaking would have helped.",
+                                points: 0
+                            },
+                            {
+                                text: "Take a quick breath, unmute, and start: \"Thanks for asking. Here's where we are...\"",
+                                correct: true,
+                                feedback: "Perfect. That breath gave you composure without making people wait. Starting with acknowledgment shows confidence. 94% of workers experience Zoom anxiety (Preply, 2024)—but you just beat it with one simple reset. This is the pro move.",
+                                points: 5
+                            },
+                            {
+                                text: "Unmute and immediately apologize: \"Sorry, I wasn't paying attention. Can you repeat the question?\"",
+                                correct: false,
+                                feedback: "Never open with an apology, even if you weren't fully focused. It destroys your credibility instantly. The CEO won't repeat themselves in front of 150 people. You just made yourself invisible for the rest of the meeting.",
+                                points: 0
+                            }
+                        ]
+                    },
+                    {
+                        id: 'unmute_q2',
+                        situation: "You're 10 seconds into your update. You notice you're speaking really fast—words tumbling out. How do you adjust?",
+                        choices: [
+                            {
+                                text: "Keep going at the same pace—you're almost done anyway",
+                                correct: false,
+                                feedback: "When you're speaking too fast, you're overwhelming your listeners. Research shows rapid speech makes content hard to absorb (multiple studies, 2024). People are zoning out. A visible breath mid-sentence would reset your rhythm.",
+                                points: 0
+                            },
+                            {
+                                text: "Mid-sentence, take a visible breath, then continue more slowly",
+                                correct: true,
+                                feedback: "This is vocal recovery in action. The visible breath isn't awkward—it's a reset. Professional speakers aim for a conversational pace that lets ideas land (research consensus, 2024). You just saved your update from becoming a blur.",
+                                points: 5
+                            },
+                            {
+                                text: "Stop abruptly and say \"Let me slow down and restart\"",
+                                correct: false,
+                                feedback: "At least you recognized the problem. But stopping and restarting calls attention to your mistake. The better move: just slow down naturally without announcing it. Nobody would have noticed.",
+                                points: 2
+                            }
+                        ]
+                    },
+                    {
+                        id: 'unmute_q3',
+                        situation: "Mid-update, you catch yourself staring at your own video tile instead of the camera. You're now self-conscious about your appearance. What do you do?",
+                        choices: [
+                            {
+                                text: "Keep looking at yourself while talking—you need to monitor how you appear",
+                                correct: false,
+                                feedback: "27% of people focus mainly on their own image during calls (Preply, 2024). This is \"mirror anxiety\" and it destroys your delivery. You're now talking TO yourself, not TO the audience. Look at the camera.",
+                                points: 0
+                            },
+                            {
+                                text: "Shift your eyes to the camera lens and finish your point there",
+                                correct: true,
+                                feedback: "Exactly right. Eye contact = looking at the camera on Zoom, not at faces (Zoom research, 2024). This one shift transformed your update from self-focused to audience-focused. That's leadership presence.",
+                                points: 5
+                            },
+                            {
+                                text: "Click \"Hide Self View\" mid-sentence to stop seeing yourself",
+                                correct: false,
+                                feedback: "Great instinct, wrong timing. Clicking mid-sentence will pause your flow and make noise. But \"Hide Self View\" is a pro feature—use it BEFORE the call starts next time. Research shows seeing yourself increases anxiety (Miller et al., 2017).",
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'unmute_q4',
+                        situation: "You're finishing your update. You notice your shoulders are hunched forward and your camera is below eye level. How does this affect your voice?",
+                        choices: [
+                            {
+                                text: "It doesn't—your voice is independent of your posture",
+                                correct: false,
+                                feedback: "False. Hunching compresses your diaphragm, reducing breath support and vocal power. Your voice sounds less confident because it IS less powerful. Body language and vocal presence are inseparable.",
+                                points: 0
+                            },
+                            {
+                                text: "Sit upright to open your diaphragm and strengthen your voice",
+                                correct: true,
+                                feedback: "Perfect integration of Episode 2 (Body Language) and Episode 4 (Voice). Sitting up straight gives you better breath support, which gives you a stronger, more authoritative voice. Even on audio-only calls, fix your posture.",
+                                points: 5
+                            },
+                            {
+                                text: "It makes your voice higher-pitched and weaker-sounding",
+                                correct: false,
+                                feedback: "Partially correct. Poor posture does weaken your voice by limiting breath support. But it doesn't necessarily raise pitch. The main issue: reduced vocal power and projection from diaphragm compression.",
+                                points: 3
+                            }
+                        ]
+                    }
+                ],
+                proTip: "Before every Zoom call: (1) Hide Self View to eliminate mirror anxiety, (2) Position camera at eye level, (3) Take 3 deep breaths to lower your speaking pace from nervous 180 WPM to confident 140-150 WPM. These 30 seconds transform your vocal presence."
+            },
+            {
+                id: 'investor_pitch',
+                title: 'The Investor Pitch',
+                icon: '💼',
+                context: "You're Arjun, founder pitching to Series A investors. 15-minute pitch. You've practiced 50 times. Now you're in the room with $5M on the line. You're 3 minutes in.",
+                challenge: "Sound confident without arrogant. Passionate without desperate. Clear without rushed. Every filler word is costing you credibility.",
+                questions: [
+                    {
+                        id: 'investor_q1',
+                        situation: "Investor asks about burn rate. You know it's $127K/month, but you say \"$172K... wait, no, sorry, um...\" You stumbled. How do you recover?",
+                        choices: [
+                            {
+                                text: "Laugh nervously and say \"Sorry, I'm a bit nervous. Let me check my notes...\"",
+                                correct: false,
+                                feedback: "Verbalizing nervousness destroys confidence. Checking notes for basic metrics signals you don't know your business. Investors just mentally moved to the next pitch deck. Never apologize for being nervous—just recover and move on.",
+                                points: 0
+                            },
+                            {
+                                text: "Immediately correct yourself clearly: \"The burn rate is $127,000 per month.\"",
+                                correct: true,
+                                feedback: "Perfect recovery. No pause needed here—pausing after a stumble can look like you're still confused. The immediate, clear correction shows you DO know your numbers, you just misspoke. Investors don't care about the stumble—they care about the recovery.",
+                                points: 7
+                            },
+                            {
+                                text: "Keep talking quickly to cover the mistake: \"Um, anyway, the burn rate fluctuates but basically we're...\"",
+                                correct: false,
+                                feedback: "Speeding up after a mistake signals panic. \"Fluctuates but basically\" is vague and defensive. You're now adding more filler words instead of fixing the error. Stop, correct clearly, move on.",
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'investor_q2',
+                        situation: "Mid-pitch, you notice one investor checking their phone. The other two are engaged. Do you adjust your vocal delivery?",
+                        choices: [
+                            {
+                                text: "Add energy and slightly increase your pace to regain attention",
+                                correct: true,
+                                feedback: "Good instinct. Varying pace and energy keeps attention—that's what great speakers do. The key is staying controlled while adding momentum. You need passion with precision, not panic. This tactical shift can pull wandering attention back.",
+                                points: 6
+                            },
+                            {
+                                text: "Slow down dramatically and drop your voice lower to sound more authoritative",
+                                correct: false,
+                                feedback: "A deeper voice can help with credibility (Duke research), but slowing way down when you're losing someone will just lose them more. The phone-checker will zone out completely. You need energy shifts, not just volume or pace changes.",
+                                points: 3
+                            },
+                            {
+                                text: "Keep the exact same pace and delivery—don't let one person throw you off",
+                                correct: false,
+                                feedback: "Confidence is good, but great speakers read their room and adapt. Ignoring signals means you're presenting AT people, not TO them. One phone-checker today could mean three tomorrow if you don't engage dynamically.",
+                                points: 2
+                            }
+                        ]
+                    },
+                    {
+                        id: 'investor_q3',
+                        situation: "You reach the \"How Our AI Works\" slide. Complicated. How do you explain it vocally?",
+                        choices: [
+                            {
+                                text: "Maintain your normal conversational pace with clear articulation",
+                                correct: false,
+                                feedback: "Normal pace works for simple content, but technical content needs slower delivery to let complex ideas sink in (research consensus). At your regular speed, you're losing them. For complicated topics, you need to slow down noticeably.",
+                                points: 2
+                            },
+                            {
+                                text: "Slow down and pause after each key point",
+                                correct: true,
+                                feedback: "Perfect. Complex content requires slower pace plus strategic pauses so listeners can process. You're teaching, not just talking. This is how executives explain technical concepts—giving each idea time to land before moving to the next.",
+                                points: 7
+                            },
+                            {
+                                text: "Use an analogy and speed up to build excitement: \"It's like, you know, imagine if...\"",
+                                correct: false,
+                                feedback: "Analogies help, but speeding up hurts comprehension. \"It's like, you know, imagine if\" uses three filler phrases in six words. You're now overwhelming them with pace AND vague language. Slow down, be specific.",
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'investor_q4',
+                        situation: "Investor asks: \"Why you? What makes YOU the right person to build this?\" Your answer needs confidence without arrogance. What's your vocal approach?",
+                        choices: [
+                            {
+                                text: "Answer quickly and confidently too quickly: \"I've been working on this problem for 6 years, I know this space better than anyone...\"",
+                                correct: false,
+                                feedback: "Content is strong, but speed undermines it. At 160+ WPM, you sound defensive, not confident. Research shows persuasive speeches work at 150-160 WPM, but \"why you\" questions need grounded delivery. Slow down to 140-150 WPM.",
+                                points: 3
+                            },
+                            {
+                                text: "Answer with calm confidence: \"I've spent six years solving this problem. Here's what I've learned...\"",
+                                correct: true,
+                                feedback: "Flawless. The pause shows you're thinking, not reciting. 140-150 WPM = conversational confidence. Downward inflections = certainty (not questioning yourself). \"Here's what I've learned\" = humble authority. Investors just leaned in.",
+                                points: 7
+                            },
+                            {
+                                text: "Pause 2 seconds, lower your pitch, then speak: \"Well, um, I think what makes me different is...\"",
+                                correct: false,
+                                feedback: "The pause and lower pitch were good instincts, but \"well, um, I think\" destroys any authority you were building. You used 2 fillers and a qualifier in 6 words. Even with the pause, uncertainty in your words kills credibility.",
+                                points: 1
+                            }
+                        ]
+                    }
+                ],
+                proTip: "Investor pitches: Record yourself and count filler words. Aim for 2% (2 per 100 words)—this builds trust. Above 5% kills credibility (Avoma research, 1M calls). Practice your pitch until fillers drop below 3%. For technical slides: 130-140 WPM. For passion moments: 150-160 WPM. Vary pace = dynamic speaker."
+            },
+            {
+                id: 'team_meeting',
+                title: 'The Team Meeting',
+                icon: '👥',
+                context: "You're Zara, newly promoted team lead of 12 people. First team meeting as lead. Some team members are older/more experienced than you. You need to establish authority without alienating anyone.",
+                challenge: "Command respect while staying inclusive. Authority without dominance. Your vocal tone sets the entire dynamic.",
+                questions: [
+                    {
+                        id: 'team_q1',
+                        situation: "You're opening your first meeting as team lead. What vocal tone do you set?",
+                        choices: [
+                            {
+                                text: "Speak loudly and firmly to establish dominance: \"Alright everyone, let's get started. Here's how this will work...\"",
+                                correct: false,
+                                feedback: "Volume ≠ authority. You're overcompensating. Research shows authority comes from certainty in your voice and steady pace, not loudness. You just sounded aggressive, not authoritative. Dial it back.",
+                                points: 1
+                            },
+                            {
+                                text: "Speak at normal volume with certainty in your voice: \"Good morning. Let's dive into our priorities for Q1.\"",
+                                correct: true,
+                                feedback: "Perfect. Normal volume + certainty in your voice = quiet authority. Ending statements DOWN in pitch (not up) signals confidence, not questioning (research consensus). You set a collaborative but clear tone. This is leadership.",
+                                points: 5
+                            },
+                            {
+                                text: "Speak softly and use making it sound like a question: \"Hi everyone? Should we get started?\"",
+                                correct: false,
+                                feedback: "Upward inflections make it sound like you're asking permission, not leading. \"Should we get started?\" is a question, not a directive. You just signaled uncertainty to 12 people who need clarity. Use certainty in your voice.",
+                                points: 0
+                            }
+                        ]
+                    },
+                    {
+                        id: 'team_q2',
+                        situation: "A senior team member (older than you) challenges your decision: \"I don't think that approach will work.\" How do you respond vocally?",
+                        choices: [
+                            {
+                                text: "Raise your voice slightly and speak faster to defend yourself: \"Actually, if you look at the data...\"",
+                                correct: false,
+                                feedback: "Raising volume + speaking faster = defensive, not authoritative. You're signaling that the challenge rattled you. Research shows speakers under attack should pause and slow down, not speed up. You lost this exchange.",
+                                points: 0
+                            },
+                            {
+                                text: "Respond calmly and steadily: \"I hear your concern. Walk me through your thinking.\"",
+                                correct: true,
+                                feedback: "Masterclass. The pause = composure under challenge. Normal volume = you're not threatened. Downward inflections = authority. \"Walk me through\" = inclusive but still in control. You just turned a challenge into collaboration.",
+                                points: 5
+                            },
+                            {
+                                text: "Lower your pitch and speak slower to sound more serious: \"That's an interesting perspective, but I've decided we're moving forward.\"",
+                                correct: false,
+                                feedback: "Lowering pitch helps (authority signal), and slower pace shows control. But \"I've decided we're moving forward\" shuts down dialogue. You won the moment but might lose the person. The better move: invite their thinking first.",
+                                points: 3
+                            }
+                        ]
+                    },
+                    {
+                        id: 'team_q3',
+                        situation: "One team member (always quiet) hasn't spoken in 20 minutes. You want their input. How do you invite them vocally?",
+                        choices: [
+                            {
+                                text: "Call them out directly in front of everyone: \"Rohan, you've been quiet. What do you think?\"",
+                                correct: false,
+                                feedback: "Calling out quiet people in groups can backfire—puts them on the spot, increases anxiety. Better approach: create space for optional participation. Or ask them privately after the meeting. You just made Rohan more anxious.",
+                                points: 1
+                            },
+                            {
+                                text: "Use a gentle, inclusive tone: \"Any other thoughts? Rohan, we'd love to hear your ideas.\"",
+                                correct: true,
+                                feedback: "Perfect. Upward inflections work here because you're inviting, not directing. \"If you have ideas\" gives an out (no pressure). Gentle tone = safe space. Rohan might actually speak now. This is inclusive leadership.",
+                                points: 5
+                            },
+                            {
+                                text: "Ignore them and keep moving—if they wanted to speak, they would",
+                                correct: false,
+                                feedback: "Wrong. Quiet people often have great ideas but need invitation. As a leader, creating space for all voices is your job. Research shows diverse input improves decisions. You just left value on the table.",
+                                points: 0
+                            }
+                        ]
+                    },
+                    {
+                        id: 'team_q4',
+                        situation: "Meeting is running 5 minutes over. How do you close it vocally?",
+                        choices: [
+                            {
+                                text: "Speed up your speech and talk over people: \"Okay we're over time, here's what we're doing, meeting's over, bye!\"",
+                                correct: false,
+                                feedback: "Speeding up + talking over people = loss of control, not efficiency. You just ended on a chaotic note. Leaders close meetings with clarity and calm, even when over time. This was frantic.",
+                                points: 0
+                            },
+                            {
+                                text: "Speak at normal pace with certainty in your voice: \"We're at time. Here are our three action items. See you next week.\"",
+                                correct: true,
+                                feedback: "Perfect. Normal pace = control. Downward inflections = decisiveness. Three action items = clarity. You wrapped efficiently without chaos. This is how executives close meetings—calm authority.",
+                                points: 5
+                            },
+                            {
+                                text: "Apologize for running over: \"Sorry everyone, I know we're over time. I'll be better next time. Um, so, I guess we're done?\"",
+                                correct: false,
+                                feedback: "Never end with an apology and \"I guess\"—you just gave away all your authority in 15 words. Plus \"um\" and \"so\" are filler words. Even if you went over, close with confidence: \"Here's what we accomplished. See you next week.\" Own it.",
+                                points: 1
+                            }
+                        ]
+                    }
+                ],
+                proTip: "Leading meetings: Authority = certainty in your voice + normal volume + steady pace. NOT loud volume. When challenged, pause 2 seconds before responding (shows control). When inviting input, making it sound like a question + gentle tone work (creates safety). Your voice sets the culture."
+            },
+            {
+                id: 'media_interview',
+                title: 'The Media Interview',
+                icon: '🎙️',
+                context: "You're Michael, CMO during product controversy. Live TV interview. Hostile journalist. 5 million watching. Company reputation on the line. The questions are getting personal.",
+                challenge: "Stay composed. Don't get defensive. Every vocal inflection is being analyzed. Pauses are power.",
+                questions: [
+                    {
+                        id: 'media_q1',
+                        situation: "Journalist opens with: \"Your product failed. People are angry. What do you have to say?\" How do you respond vocally?",
+                        choices: [
+                            {
+                                text: "Respond immediately and quickly: \"Well, actually, if you look at the full context, what happened was...\"",
+                                correct: false,
+                                feedback: "Responding immediately = defensive. Speaking fast = rattled. \"Well, actually\" = combative. Research shows: pause 2 seconds before responding to attacks—looks like composure on camera (Harvard research). You just looked guilty.",
+                                points: 0
+                            },
+                            {
+                                text: "Respond calmly and directly: \"You're right, we let customers down. Here's what we're doing.\"",
+                                correct: true,
+                                feedback: "Flawless crisis response. The 2-second pause = control, not panic. Acknowledging the issue = credibility (not deflecting). Steady pace at 140 WPM = calm authority. This is how Sheryl Sandberg and Indra Nooyi handle attacks. You just won the interview.",
+                                points: 5
+                            },
+                            {
+                                text: "Pause, then speak in a noticeably lower pitch: \"I appreciate the question. Let me provide context...\"",
+                                correct: false,
+                                feedback: "The pause helps. Lower pitch helps (signals authority). But \"I appreciate the question\" sounds too scripted for a hostile interview. \"Let me provide context\" can sound like spin. Better: acknowledge the problem directly first.",
+                                points: 3
+                            }
+                        ]
+                    },
+                    {
+                        id: 'media_q2',
+                        situation: "You're mid-answer. The journalist interrupts: \"That's not what I asked!\" How do you handle this vocally?",
+                        choices: [
+                            {
+                                text: "Raise your voice to talk over them: \"If you'd let me finish—\"",
+                                correct: false,
+                                feedback: "Never raise your voice on camera. It looks defensive and unprofessional, even if they interrupted you. Research shows composure under interruption = leadership signal. You just failed the test.",
+                                points: 0
+                            },
+                            {
+                                text: "Wait for them to finish, then continue calmly: \"As I was saying...\"",
+                                correct: true,
+                                feedback: "Perfect. Pausing = you're not rattled. Waiting = respect (even if they don't deserve it). Same volume = control. \"As I was saying\" = gentle but firm boundary. This is how politicians handle hostile interviews. You win by staying calm.",
+                                points: 5
+                            },
+                            {
+                                text: "Match their energy and speak faster: \"Let me answer! What I'm trying to explain is...\"",
+                                correct: false,
+                                feedback: "Matching their energy = losing control. Speaking faster = looking rattled. \"What I'm trying to explain\" sounds defensive. The audience sees two people yelling, and you lose. Stay calm, speak at 140 WPM, outlast them.",
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'media_q3',
+                        situation: "Journalist asks: \"So you don't care about customers?\" This is a trap. How do you reframe vocally?",
+                        choices: [
+                            {
+                                text: "Answer quickly with an upward inflection: \"No! That's not true? We care deeply?\"",
+                                correct: false,
+                                feedback: "Upward inflections make it sound like you're questioning yourself. Three question marks in a statement = zero confidence. Fast response = defensive. You just confirmed their framing by sounding uncertain. Use certainty in your voice.",
+                                points: 0
+                            },
+                            {
+                                text: "Respond with certainty: \"That's a false choice. Here's what's actually true...\"",
+                                correct: true,
+                                feedback: "Masterclass in reframing. Pause = thinking, not reacting. \"That's a false choice\" = rejecting the premise (calm authority). Downward inflections = certainty. \"Here's what's actually true\" = taking control of the narrative. This is Priyanka Chopra-level media training.",
+                                points: 5
+                            },
+                            {
+                                text: "Dodge the question entirely: \"Let's talk about the product instead...\"",
+                                correct: false,
+                                feedback: "Dodging confirms guilt in the audience's mind. Better to acknowledge and reframe than avoid. Politicians who dodge lose credibility. Address it directly, then redirect. You needed to engage, not evade.",
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'media_q4',
+                        situation: "The camera starts to cut away 3 seconds before you finish your answer. What are your last words, and how do you deliver them?",
+                        choices: [
+                            {
+                                text: "Speed up and raise your volume to finish: \"And that's why we're committed to making this right!\"",
+                                correct: false,
+                                feedback: "Speeding up + raising volume = panic. The camera operator's decision isn't your fault, but your reaction shows composure (or lack of it). Better to stay calm and let them cut. Speeding up makes you look rattled.",
+                                points: 2
+                            },
+                            {
+                                text: "Finish calmly at a steady pace: \"We're committed to making this right.\"",
+                                correct: true,
+                                feedback: "Perfect. Staying calm when the camera cuts shows ultimate composure. The control room might even give you an extra second because you're not freaking out. This is how seasoned media professionals handle technical issues. Confidence under pressure.",
+                                points: 5
+                            },
+                            {
+                                text: "Stop mid-sentence when you see the camera move: \"We're committed to mak—\"",
+                                correct: false,
+                                feedback: "Never stop mid-sentence on camera. It looks like you lost your nerve. Even if they're cutting away, finish your thought with confidence. The audio might still be live. Stay composed until you're certain you're off air.",
+                                points: 0
+                            }
+                        ]
+                    }
+                ],
+                proTip: "Media interviews: When attacked, pause 2 seconds—this reads as composure, not hesitation (Harvard research). Use certainty in your voice for certainty. Maintain 140 WPM even when interrupted (don't match their frantic energy). Your calm defeats their hostility. Priyanka Chopra never speeds up under attack—neither should you."
+            },
+            {
+                id: 'salary_negotiation',
+                title: 'The Salary Negotiation',
+                icon: '💰',
+                context: "You're Li Wei, senior software engineer. Annual review went great. Now discussing raise. You deserve 20%. HR offered 8%. This is the moment that determines your next 12 months.",
+                challenge: "Sound certain of your worth. Not apologetic. Not aggressive. Just certain. Downward inflections. Strategic silence. No fillers.",
+                questions: [
+                    {
+                        id: 'salary_q1',
+                        situation: "HR says \"8% is standard for your level.\" How do you counter vocally?",
+                        choices: [
+                            {
+                                text: "Speak quickly with making it sound like a question: \"Well, I was hoping for more? Like maybe 15-20%?\"",
+                                correct: false,
+                                feedback: "\"Well, I was hoping\" = apologetic. \"Like maybe\" = uncertain. Upward inflections = asking permission. \"15-20%\" = you don't even know your number. You just lost $10K+ in annual salary. Negotiation research is clear: certainty wins.",
+                                points: 0
+                            },
+                            {
+                                text: "Take a moment to collect your thoughts, then state your case: \"Based on my performance and market data, I'm looking for 20%.\"",
+                                correct: true,
+                                feedback: "Perfect. The pause = you're thinking, not reacting. \"Based on my performance\" = objective, not emotional. \"I'm looking for 20%\" = downward inflection, no question mark. This is how executives negotiate. Certain, calm, data-backed.",
+                                points: 8
+                            },
+                            {
+                                text: "Lower your pitch and speak slower: \"I understand 8% is standard, but I think I deserve more because...\"",
+                                correct: false,
+                                feedback: "Lowering pitch helps (authority signal). But \"I understand\" + \"I think\" = weak framing. You're conceding their number before defending yours. Remove \"I think\"—replace with \"Based on X, my number is Y.\" Own your worth.",
+                                points: 3
+                            }
+                        ]
+                    },
+                    {
+                        id: 'salary_q2',
+                        situation: "You state your number: \"20%.\" HR is silent for 8 seconds, staring at you. What do you do?",
+                        choices: [
+                            {
+                                text: "Fill the silence: \"Um, or we could do 18%? I'm flexible...\"",
+                                correct: false,
+                                feedback: "You just negotiated AGAINST yourself. HR was using tactical silence to make you uncomfortable—and it worked. Research shows: whoever speaks first after stating their number loses. You dropped from 20% to 18% in 8 seconds. Brutal.",
+                                points: 0
+                            },
+                            {
+                                text: "Sit in silence, maintain eye contact, wait for them to respond",
+                                correct: true,
+                                feedback: "Masterclass in negotiation. Silence is power. You stated your number with confidence (downward inflection), now you wait. The discomfort is theirs to manage, not yours. This is how VPs negotiate. Never fill silence after stating your ask.",
+                                points: 8
+                            },
+                            {
+                                text: "Smile and break the silence with: \"That's my number based on market rates.\"",
+                                correct: false,
+                                feedback: "You broke the silence too early. The first part was strong (\"That's my number\"), but you gave them an out by adding \"based on market rates\"—now they can argue about \"market.\" Better to just wait in silence. Let them respond first.",
+                                points: 4
+                            }
+                        ]
+                    },
+                    {
+                        id: 'salary_q3',
+                        situation: "HR says \"That seems high.\" How do you defend your worth vocally?",
+                        choices: [
+                            {
+                                text: "Speak faster and louder: \"It's not high! Let me explain why I earned this...\"",
+                                correct: false,
+                                feedback: "Faster + louder = defensive = weak. \"Let me explain why I earned\" sounds like begging. Research shows confident speakers maintain steady pace even under challenge (140-150 WPM). You just signaled that their pushback rattled you.",
+                                points: 0
+                            },
+                            {
+                                text: "Present your reasoning: \"Here are three reasons this is the right number...\"",
+                                correct: true,
+                                feedback: "Perfect. Pause = composure. Normal pace = confidence. Downward inflections = certainty. \"Here are three reasons\" = data-driven, not emotional. \"This is the right number\" (not \"I think\" or \"I feel\") = conviction. You just earned that 20%.",
+                                points: 8
+                            },
+                            {
+                                text: "Ask them a question: \"What number did you have in mind?\"",
+                                correct: false,
+                                feedback: "This can work as a tactic, but timing matters. You already stated 20%—asking their number now looks like you're backing down. Better to defend your number first, THEN ask theirs if negotiation continues. You showed uncertainty too early.",
+                                points: 2
+                            }
+                        ]
+                    },
+                    {
+                        id: 'salary_q4',
+                        situation: "After negotiation, you land at 18%. HR says \"Deal?\" How do you close vocally?",
+                        choices: [
+                            {
+                                text: "Show relief and excitement: \"Yes! Thank you so much! I really appreciate it!\"",
+                                correct: false,
+                                feedback: "Gratitude is fine, but \"Thank you SO MUCH\" + \"I really appreciate it\" = you're more grateful than they are. This was a negotiation, not a favor. Better close: \"I'm pleased we could reach an agreement.\" Maintain confidence even in agreement.",
+                                points: 3
+                            },
+                            {
+                                text: "Confirm with a steady tone: \"18% works. When does this take effect?\"",
+                                correct: true,
+                                feedback: "Flawless. Calm confirmation = you're satisfied but not over-grateful. Downward inflection = certainty. \"When does this take effect?\" = professional follow-up, still in negotiation mode. You closed with authority. This is executive-level negotiation.",
+                                points: 9
+                            },
+                            {
+                                text: "Express disappointment: \"I was hoping for 20%, but I guess 18% is okay...\"",
+                                correct: false,
+                                feedback: "Never express disappointment after accepting an offer. \"I guess it's okay\" poisons the agreement. You agreed to 18%—own it with confidence or don't agree at all. You just made HR regret giving you 18%. Terrible close.",
+                                points: 0
+                            }
+                        ]
+                    }
+                ],
+                proTip: "Salary negotiation voice rules: (1) State your number with downward inflection—no question mark, (2) After stating your ask, SIT IN SILENCE—whoever speaks first loses, (3) Remove 'I think/I feel/I hope'—replace with 'Based on X, my number is Y,' (4) Maintain 140-150 WPM even under pressure—speeding up signals desperation. Your voice IS your negotiating power."
+            }
+        ];
+
+        // ============================================
+        // SHUFFLE UTILITIES (GOLDEN RULES)
+        // ============================================
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function getShuffledChoices(questionId) {
+            if (state.shuffledChoices[questionId]) {
+                return state.shuffledChoices[questionId];
+            }
+
+            let question = null;
+            for (const scenario of scenarios) {
+                question = scenario.questions.find(q => q.id === questionId);
+                if (question) break;
+            }
+            
+            const originalChoices = question.choices;
+            const correctChoiceIndex = originalChoices.findIndex(c => c.correct);
+            
+            const indexedChoices = originalChoices.map((choice, idx) => ({
+                ...choice,
+                originalIndex: idx
+            }));
+            
+            const shuffled = shuffleArray(indexedChoices);
+            const newCorrectIndex = shuffled.findIndex(c => c.originalIndex === correctChoiceIndex);
+            
+            state.shuffledChoices[questionId] = {
+                choices: shuffled,
+                correctIndex: newCorrectIndex
+            };
+            
+            return state.shuffledChoices[questionId];
+        }
+
+        // ============================================
+        // SOUND EFFECTS
+        // ============================================
+        const sounds = {
+            correct: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+            },
+            incorrect: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/142/142608_2615119-lq.mp3');
+                audio.volume = 0.2;
+                audio.play().catch(() => {});
+            },
+            complete: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/270/270402_5123851-lq.mp3');
+                audio.volume = 0.4;
+                audio.play().catch(() => {});
+            }
+        };
+
+        // ============================================
+        // CONFETTI
+        // ============================================
+        function triggerConfetti() {
+            const duration = 2500;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#b87333', '#d4965a', '#8b1e3f']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#b87333', '#d4965a', '#8b1e3f']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        function getTotalQuestions() {
+            return scenarios.reduce((sum, s) => sum + s.questions.length, 0);
+        }
+
+        function getCurrentScenarioAndQuestion() {
+            let questionCount = 0;
+            for (const scenario of scenarios) {
+                if (state.currentQuestion < questionCount + scenario.questions.length) {
+                    const questionIndex = state.currentQuestion - questionCount;
+                    return { scenario, questionIndex, question: scenario.questions[questionIndex] };
+                }
+                questionCount += scenario.questions.length;
+            }
+            return null;
+        }
+
+        function updateScore(points) {
+            state.score += points;
+            document.getElementById('scoreNumber').textContent = state.score;
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function startEpisode() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            renderProgressDots();
+            renderQuestion();
+        }
+
+        function renderProgressDots() {
+            const totalQuestions = getTotalQuestions();
+            const dots = Array.from({ length: totalQuestions }, (_, idx) => {
+                let className = 'progress-dot';
+                if (idx === state.currentQuestion) className += ' active';
+                if (idx < state.currentQuestion) className += ' completed';
+                return `<div class="${className}"></div>`;
+            }).join('');
+            
+            document.getElementById('progressDots').innerHTML = dots;
+        }
+
+        // ============================================
+        // RENDERING
+        // ============================================
+        function renderQuestion() {
+            if (state.currentQuestion >= getTotalQuestions()) {
+                renderResults();
+                return;
+            }
+
+            state.answerLocked = false;
+            const data = getCurrentScenarioAndQuestion();
+            if (!data) return;
+            
+            const { scenario, questionIndex, question } = data;
+            const { choices, correctIndex } = getShuffledChoices(question.id);
+            
+            const isFirstQuestionOfScenario = questionIndex === 0;
+            const isLastQuestionOfScenario = questionIndex === scenario.questions.length - 1;
+
+            const content = `
+                <div class="question-container">
+                    ${isFirstQuestionOfScenario ? `
+                        <div class="scenario-header">
+                            <div class="scenario-icon">${scenario.icon}</div>
+                            <h2 class="scenario-title">${scenario.title}</h2>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div class="scenario-section">
+                                <div class="section-label">CONTEXT</div>
+                                <div class="section-content">${scenario.context}</div>
+                            </div>
+                            
+                            <div class="scenario-section">
+                                <div class="section-label">THE CHALLENGE</div>
+                                <div class="section-content">${scenario.challenge}</div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <h3 class="question-title">Question ${state.currentQuestion + 1} of ${getTotalQuestions()}</h3>
+                    
+                    <div class="scenario-card">
+                        <div class="section-label">THE SITUATION</div>
+                        <div class="section-highlight">${question.situation}</div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <div class="section-label" style="text-align: center;">WHAT WOULD YOU DO?</div>
+                    </div>
+
+                    <div class="choices-container" id="choicesContainer">
+                        ${choices.map((choice, displayIdx) => `
+                            <button 
+                                onclick="handleChoice(${displayIdx}, ${correctIndex})"
+                                class="choice-btn"
+                                data-display-idx="${displayIdx}"
+                                data-original-idx="${choice.originalIndex}"
+                            >
+                                <div class="choice-content">
+                                    <div class="choice-letter">${String.fromCharCode(65 + displayIdx)}</div>
+                                    <div class="choice-text">${choice.text}</div>
+                                </div>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="feedbackArea" class="feedback-area" style="display: none;"></div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+            renderProgressDots();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // CHOICE HANDLING
+        // ============================================
+        function handleChoice(selectedDisplayIdx, correctDisplayIdx) {
+            if (state.answerLocked) return;
+            state.answerLocked = true;
+
+            const data = getCurrentScenarioAndQuestion();
+            const { scenario, questionIndex, question } = data;
+            const { choices } = getShuffledChoices(question.id);
+            const selectedChoice = choices[selectedDisplayIdx];
+            const isCorrect = selectedDisplayIdx === correctDisplayIdx;
+            
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            buttons.forEach((btn, idx) => {
+                if (idx === selectedDisplayIdx) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (idx === correctDisplayIdx) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                sounds.correct();
+                updateScore(selectedChoice.points);
+                if (selectedChoice.points >= 7) {
+                    setTimeout(triggerConfetti, 500);
+                }
+            } else {
+                sounds.incorrect();
+                if (selectedChoice.points > 0) {
+                    updateScore(selectedChoice.points);
+                }
+            }
+
+            state.answers.push({
+                questionId: question.id,
+                selectedDisplayIdx: selectedDisplayIdx,
+                correct: isCorrect,
+                points: selectedChoice.points
+            });
+
+            setTimeout(() => {
+                showFeedback(selectedChoice, scenario, questionIndex);
+            }, 800);
+        }
+
+        function showFeedback(choice, scenario, questionIndex) {
+            const isLastQuestionOfScenario = questionIndex === scenario.questions.length - 1;
+            const isLastQuestionOfEpisode = state.currentQuestion === getTotalQuestions() - 1;
+            
+            const feedbackHTML = `
+                <div class="feedback-card ${choice.correct ? 'correct' : 'incorrect'}">
+                    <div class="feedback-header">
+                        <div class="feedback-icon">${choice.correct ? '✓' : '✗'}</div>
+                        <div style="flex: 1;">
+                            <h4 class="feedback-title ${choice.correct ? 'correct' : 'incorrect'}">
+                                ${choice.correct ? 'Excellent Choice!' : 'Not Quite...'}
+                            </h4>
+                            <div class="feedback-text">${choice.feedback}</div>
+                        </div>
+                    </div>
+                    
+                    ${isLastQuestionOfScenario ? `
+                        <div class="pro-tip-box">
+                            <div class="pro-tip-label">💎 PRO TIP</div>
+                            <div class="pro-tip-text">${scenario.proTip}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="nav-buttons">
+                        ${state.currentQuestion > 0 ? `
+                            <button onclick="previousQuestion()" class="back-btn">
+                                ← Back
+                            </button>
+                        ` : ''}
+                        <button onclick="nextQuestion()" class="next-btn">
+                            ${isLastQuestionOfEpisode ? 'See Results ✨' : 'Next Question →'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = feedbackHTML;
+            feedbackArea.style.display = 'block';
+            feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextQuestion() {
+            state.currentQuestion++;
+            renderQuestion();
+        }
+
+        function previousQuestion() {
+            if (state.currentQuestion > 0) {
+                state.currentQuestion--;
+                state.answerLocked = false;
+                renderQuestion();
+            }
+        }
+
+        // ============================================
+        // RESULTS
+        // ============================================
+        function renderResults() {
+            // Calculate actual max points from scenarios
+            let totalPossible = 0;
+            scenarios.forEach(scenario => {
+                scenario.questions.forEach(question => {
+                    const maxPoints = Math.max(...question.choices.map(c => c.points));
+                    totalPossible += maxPoints;
+                });
+            });
+            const percentage = Math.round((state.score / totalPossible) * 100);
+            
+            let rating = '';
+            let ratingColor = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                rating = 'VOICE OF COMMAND';
+                ratingColor = 'color: #3d9164';
+                message = 'You sound like a natural leader. Your vocal presence projects authority, confidence, and calm under pressure. You understand that your voice is worth $187,000 (Duke research) and you\'ve mastered the skills to claim it.';
+            } else if (percentage >= 70) {
+                rating = 'STRONG COMMUNICATOR';
+                ratingColor = 'color: #d4965a';
+                message = 'Solid vocal presence with room to grow. You understand pace, pauses, and projection fundamentals. With practice, you\'ll master the nuances that separate good speakers from great ones.';
+            } else if (percentage >= 55) {
+                rating = 'DEVELOPING AUTHORITY';
+                ratingColor = 'color: #b8385e';
+                message = 'Good awareness of vocal challenges. You recognize when you\'re speaking too fast, using too many fillers, or sounding uncertain. The skills are learnable—keep practicing the fundamentals.';
+            } else {
+                rating = 'FINDING YOUR VOICE';
+                ratingColor = 'color: #8b1e3f';
+                message = 'Lots of opportunity to improve. Vocal presence isn\'t innate—it\'s trained. Focus on the basics: 140-160 WPM pace, eliminating fillers above 5%, using certainty in your voice for certainty, and pausing before responding.';
+            }
+
+            const content = `
+                <div class="results-container">
+                    <div style="margin-bottom: 32px;">
+                        <div class="episode-badge">EPISODE 4 COMPLETE</div>
+                    </div>
+                    
+                    <div class="results-score">${percentage}%</div>
+                    
+                    <h2 class="results-title" style="${ratingColor}">${rating}</h2>
+                    
+                    <p class="results-message">${message}</p>
+
+                    <div class="scenario-card" style="margin: 48px auto; max-width: 700px;">
+                        <div class="section-label" style="text-align: center;">YOUR STATS</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 36px; font-weight: 900; color: var(--bronze); font-family: 'Crimson Pro', serif;">${state.score}</div>
+                                <div style="font-size: 11px; color: var(--bronze-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Points</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 36px; font-weight: 900; color: var(--bronze); font-family: 'Crimson Pro', serif;">${state.answers.filter(a => a.correct).length}</div>
+                                <div style="font-size: 11px; color: var(--bronze-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Correct</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 36px; font-weight: 900; color: var(--bronze); font-family: 'Crimson Pro', serif;">20</div>
+                                <div style="font-size: 11px; color: var(--bronze-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Questions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scenario-card" style="max-width: 700px; margin: 0 auto 40px;">
+                        <div class="section-label" style="text-align: center; margin-bottom: 24px;">MASTER THESE 5 VOCAL SKILLS</div>
+                        <div style="text-align: left; font-size: 15px; line-height: 1.8; color: var(--cream);">
+                            <p style="margin-bottom: 16px;"><strong style="color: var(--bronze-light);">1. Pace Control:</strong> 140-160 WPM for professional communication. Below 120 = slow/uncertain. Above 180 = nervous/overwhelming.</p>
+                            
+                            <p style="margin-bottom: 16px;"><strong style="color: var(--bronze-light);">2. Strategic Fillers:</strong> 2% builds trust (sounds authentic). Above 5% destroys credibility. Record yourself and count.</p>
+                            
+                            <p style="margin-bottom: 16px;"><strong style="color: var(--bronze-light);">3. Power Pauses:</strong> 2-second pause before responding to challenges = composure, not hesitation. Silence is strength in negotiation.</p>
+                            
+                            <p style="margin-bottom: 16px;"><strong style="color: var(--bronze-light);">4. Downward Inflections:</strong> End statements going DOWN in pitch (not up). Upward = questioning yourself. Downward = certain authority.</p>
+                            
+                            <p><strong style="color: var(--bronze-light);">5. Posture-Voice Integration:</strong> Sit up straight (opens diaphragm) = stronger, more powerful voice. Your body affects your sound.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="restartEpisode()" class="next-btn">
+                        Try Again ✨
+                    </button>
+
+                    <p style="margin-top: 40px; font-size: 14px; color: rgba(244, 241, 234, 0.5);">
+                        Your voice is worth $187,000. Duke research found CEOs with lower-pitched voices earn that much more. But it's not about faking a deep voice—it's about mastering pace, pauses, and projection.
+                    </p>
+
+                    <!-- Copyright Footer -->
+                    <div style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(139, 30, 63, 0.2);">
+                        <div style="font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 700; color: var(--bronze); margin-bottom: 12px;">
+                            FORTEEN CONSULTING
+                        </div>
+                        <div style="font-size: 13px; color: rgba(244, 241, 234, 0.7); line-height: 1.6; margin-bottom: 16px;">
+                            Unforgettable: Episode 4 - The Voice of Authority
+                        </div>
+                        <div style="font-size: 12px; color: rgba(244, 241, 234, 0.5); margin-bottom: 8px;">
+                            Copyright © 2025 Forteen Consulting. All Rights Reserved.
+                        </div>
+                        <div style="font-size: 11px; color: rgba(244, 241, 234, 0.4); line-height: 1.5; max-width: 700px; margin: 0 auto 16px;">
+                            This content, including all scenarios, questions, feedback, and research citations, is proprietary to Forteen Consulting. 
+                            Unauthorized copying, distribution, or commercial use is prohibited.
+                        </div>
+                        <div style="font-size: 11px;">
+                            <a href="https://forteenconsulting.com" style="color: var(--bronze-light); text-decoration: none; margin: 0 12px; transition: color 0.3s;" onmouseover="this.style.color='var(--bronze)'" onmouseout="this.style.color='var(--bronze-light)'">forteenconsulting.com</a>
+                            <span style="color: rgba(244, 241, 234, 0.3);">•</span>
+                            <a href="mailto:girish@forteen.in" style="color: var(--bronze-light); text-decoration: none; margin: 0 12px; transition: color 0.3s;" onmouseover="this.style.color='var(--bronze)'" onmouseout="this.style.color='var(--bronze-light)'">girish@forteen.in</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+            sounds.complete();
+            setTimeout(triggerConfetti, 500);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartEpisode() {
+            state.currentQuestion = 0;
+            state.score = 0;
+            state.answers = [];
+            state.shuffledChoices = {};
+            state.answerLocked = false;
+            
+            document.getElementById('scoreNumber').textContent = '0';
+            renderQuestion();
+            renderProgressDots();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
