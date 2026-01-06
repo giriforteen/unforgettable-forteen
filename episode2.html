@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Without Speaking | Episode 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --slate-blue: #6B7C8C;
+            --bright-cyan: #00B4D8;
+            --living-green: #4A7C59;
+            --warm-beige: #D4C5B0;
+            --off-white: #F8F9FA;
+            --charcoal: #2D2D2D;
+            --dark-bg: #1A2332;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--off-white);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Intro Screen */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #1A2332 0%, #2D3E50 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Glass morphism */
+        .glass {
+            background: rgba(107, 124, 140, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(107, 124, 140, 0.3);
+        }
+        
+        /* Gradient text */
+        .gradient-text-cyan {
+            background: linear-gradient(135deg, var(--bright-cyan) 0%, #4AC2E3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-green {
+            background: linear-gradient(135deg, var(--living-green) 0%, #6BA37D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Scenario cards with color coding */
+        .scenario-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scenario-card.virtual {
+            border-color: var(--bright-cyan);
+        }
+        
+        .scenario-card.inperson {
+            border-color: var(--living-green);
+        }
+        
+        .scenario-card.social {
+            border-color: var(--warm-beige);
+        }
+        
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            transition: left 0.5s ease;
+        }
+        
+        .scenario-card.virtual::before {
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.1), transparent);
+        }
+        
+        .scenario-card.inperson::before {
+            background: linear-gradient(90deg, transparent, rgba(74, 124, 89, 0.1), transparent);
+        }
+        
+        .scenario-card.social::before {
+            background: linear-gradient(90deg, transparent, rgba(212, 197, 176, 0.1), transparent);
+        }
+        
+        .scenario-card:hover::before {
+            left: 100%;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 180, 216, 0.3);
+        }
+        
+        /* Choice buttons */
+        .choice-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .choice-btn.virtual::after {
+            background: linear-gradient(135deg, var(--bright-cyan) 0%, #4AC2E3 100%);
+        }
+        
+        .choice-btn.inperson::after {
+            background: linear-gradient(135deg, var(--living-green) 0%, #6BA37D 100%);
+        }
+        
+        .choice-btn.social::after {
+            background: linear-gradient(135deg, var(--warm-beige) 0%, #E8DCC8 100%);
+        }
+        
+        .choice-btn:hover::after {
+            opacity: 0.1;
+        }
+        
+        .choice-btn.correct {
+            background: linear-gradient(135deg, var(--living-green) 0%, #6BA37D 100%);
+            color: white;
+            animation: pulse 0.5s ease;
+        }
+        
+        .choice-btn.incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            animation: shake 0.4s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        /* Score display */
+        .score-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--bright-cyan) 0deg, var(--living-green) 180deg, var(--slate-blue) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .score-ring::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: var(--dark-bg);
+        }
+        
+        /* Type badges */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .badge-virtual {
+            background: linear-gradient(135deg, var(--bright-cyan) 0%, #4AC2E3 100%);
+            color: white;
+        }
+        
+        .badge-inperson {
+            background: linear-gradient(135deg, var(--living-green) 0%, #6BA37D 100%);
+            color: white;
+        }
+        
+        .badge-social {
+            background: linear-gradient(135deg, var(--warm-beige) 0%, #E8DCC8 100%);
+            color: var(--charcoal);
+        }
+        
+        /* Progress dots */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(107, 124, 140, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--bright-cyan);
+            width: 24px;
+            border-radius: 5px;
+        }
+        
+        .progress-dot.completed {
+            background: var(--living-green);
+        }
+        
+        /* Achievement badges */
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(107, 124, 140, 0.2);
+            border: 2px solid var(--bright-cyan);
+        }
+        
+        .achievement-badge.unlocked {
+            background: linear-gradient(135deg, var(--bright-cyan) 0%, #4AC2E3 100%);
+            color: white;
+            animation: pulse 0.5s ease;
+        }
+        
+        /* Analytics bars */
+        .analytics-bar {
+            height: 8px;
+            background: rgba(107, 124, 140, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .analytics-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bright-cyan) 0%, var(--living-green) 100%);
+            transition: width 1s ease;
+        }
+        
+        /* Lock screen */
+        .lock-screen {
+            background: rgba(107, 124, 140, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px dashed var(--slate-blue);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        
+        .lock-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Social share buttons */
+        .share-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 180, 216, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .scenario-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cinematic Intro -->
+    <div id="introScreen" class="intro-screen">
+        <div class="text-center animate-fade-in-up">
+            <div class="text-cyan-400 text-xs tracking-[0.3em] mb-4">FORTEEN STUDIOS PRESENTS</div>
+            <div class="text-6xl mb-4">💼</div>
+            <h1 class="text-6xl md:text-8xl font-display font-bold gradient-text-cyan mb-6">
+                COMMAND<br>WITHOUT SPEAKING
+            </h1>
+            <div class="text-gray-400 text-sm mb-2">EPISODE 2 • BODY LANGUAGE FOR THE HYBRID ERA</div>
+            <div class="text-xs text-slate-400 mb-8">4 Core Scenarios + Bonus • 15 minutes • Interactive</div>
+            <button onclick="startEpisode()" class="px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105">
+                BEGIN EPISODE 2 ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="py-6 px-4 backdrop-blur-lg bg-black/30 sticky top-0 z-50 border-b border-slate-700">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div>
+                    <div class="text-cyan-400 text-[10px] tracking-[0.3em] mb-1">FORTEEN STUDIOS • EP 2</div>
+                    <div class="font-display text-lg font-bold">Command Without Speaking</div>
+                </div>
+                <div id="scoreDisplay" class="text-right">
+                    <div class="text-2xl font-bold text-cyan-400">0</div>
+                    <div class="text-xs text-gray-400">POINTS</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress -->
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div id="progressDots" class="progress-dots"></div>
+        </div>
+
+        <!-- Content Area -->
+        <main id="contentArea" class="max-w-6xl mx-auto px-4 py-8 pb-20">
+            <!-- Dynamic content loads here -->
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            currentScenario: 0,
+            coreScore: 0,
+            bonusScore: 0,
+            answers: [],
+            startTime: Date.now(),
+            shuffledChoices: {},
+            attemptCount: 0,
+            completedAttempts: 0,
+            bonusUnlocked: false,
+            achievements: [],
+            currentAttemptCounted: false
+        };
+
+        // Load saved data
+        const savedData = localStorage.getItem('episode2_data');
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            state.attemptCount = parsed.attemptCount || 0;
+            state.completedAttempts = parsed.completedAttempts || 0;
+            state.bonusUnlocked = parsed.bonusUnlocked || false;
+            
+            console.log('=== LOADED FROM STORAGE ===');
+            console.log('Attempt Count:', state.attemptCount);
+            console.log('Completed Attempts:', state.completedAttempts);
+            console.log('Bonus Unlocked:', state.bonusUnlocked);
+            console.log('==========================');
+        } else {
+            console.log('No saved data found - fresh start');
+        }
+
+        // ============================================
+        // SCENARIOS DATA
+        // ============================================
+        const scenarios = [
+            {
+                id: 'zoom_pitch_female',
+                type: 'virtual',
+                icon: '💻',
+                title: 'The Zoom Pitch',
+                context: 'You\'re Alex, a fintech founder pitching to an international VC firm via Zoom. Two minutes in, you catch your reflection in the corner—you\'re slouched, camera angle is too low, and you\'ve been looking at their faces on screen instead of the camera.',
+                question: 'The lead investor asks: "Why should we believe you can scale globally?" You have 3 seconds to reposition and answer.',
+                situation: 'Your body language is undermining your pitch. The content is strong, but your posture screams doubt. How do you physically reset while maintaining verbal flow?',
+                choices: [
+                    {
+                        text: 'Keep talking while gradually adjusting posture—"Because we\'ve already demonstrated traction in three markets..." [slowly straighten up mid-sentence]',
+                        correct: false,
+                        feedback: 'Gradual adjustments look uncertain. The investors notice the fidgeting. When you need to reset body language, pause deliberately—it signals control. VCs respect pauses more than rambling.',
+                        points: 0
+                    },
+                    {
+                        text: 'Pause 2 seconds, sit up straight, lift ribs while breathing, look at camera, then answer: "Three reasons we\'ll scale..."',
+                        correct: true,
+                        feedback: 'Perfect! The pause signaled intentionality. Looking at the camera (not their faces) created direct eye contact on their screens. Lifting ribs while breathing is the 2025 evolution of "power posing"—it works without looking forced. This is exactly how Zoom-native executives command presence.',
+                        points: 30
+                    },
+                    {
+                        text: 'Stand up suddenly while starting your answer—"Let me show you the metrics..." [gesture enthusiastically while standing]',
+                        correct: false,
+                        feedback: 'Standing on Zoom can work, but sudden movement reads as nervous energy. If you stand, do it at a natural break in conversation, not mid-answer to a challenging question. The timing here looks reactive, not authoritative.',
+                        points: 0
+                    }
+                ],
+                proTip: '💡 Zoom Power Position: Camera at eye level, sit 2 feet back, lean forward 15° when making key points, always look at CAMERA when speaking (not their faces). 94% of workers report Zoom anxiety—mastering virtual posture is the #1 executive presence skill in 2026.'
+            },
+            {
+                id: 'virtual_team_male',
+                type: 'virtual',
+                icon: '👥',
+                title: 'The Virtual Team Meeting',
+                context: 'You\'re Jordan, a product manager at TechFlow leading a distributed team stand-up across North America, Europe, and APAC. Three team members are clearly multitasking—typing, looking away, nodding without comprehension.',
+                question: 'You just explained the sprint goal. Someone in London asks "Sorry, can you repeat that?" Your manager is observing silently.',
+                situation: 'The content isn\'t the problem—your delivery is. Virtual meetings require 40% more energy than in-person to maintain engagement. What physical adjustment captures attention?',
+                choices: [
+                    {
+                        text: 'Repeat the goal in the same seated position, maintaining the same vocal tone and pace: "As I mentioned, the sprint goal is..."',
+                        correct: false,
+                        feedback: 'Repeating without changing anything guarantees the same non-engagement. You missed the signal—they weren\'t listening because your delivery didn\'t demand attention. Virtual presence requires deliberate physical shifts to reset focus.',
+                        points: 0
+                    },
+                    {
+                        text: 'Stand up so you\'re visible on camera, use deliberate hand gestures, speak 20% slower with a lower pitch, repeat the goal clearly',
+                        correct: true,
+                        feedback: 'Masterclass! Standing on video increases perceived leadership by 40%—it triggers mirror neurons. Speaking slower with a lower pitch (especially for male voices) conveys authority. The hand gestures gave visual anchors for memory. Your manager noted this as a recovery moment that demonstrated leadership.',
+                        points: 25
+                    },
+                    {
+                        text: 'Type the full sprint goal in the chat while simultaneously saying "Everyone check the chat right now for the details"',
+                        correct: false,
+                        feedback: 'Text as a backup is fine, but relying on chat instead of commanding verbal attention signals that you don\'t expect them to listen. Strong leaders make the meeting THE medium, not chat. Use chat to reinforce, never to replace presence.',
+                        points: 0
+                    }
+                ],
+                proTip: '💡 Virtual Engagement Formula: Stand when stakes are high → Use hand gestures that fit in frame → Speak 20% slower than in-person → Pause 3 seconds after key points. Movement on camera captures wandering attention. Recent studies show standing during virtual presentations increases engagement 40%.'
+            },
+            {
+                id: 'boardroom_female',
+                type: 'inperson',
+                icon: '📊',
+                title: 'The Boardroom Mismatch',
+                context: 'You\'re Sam, VP of Sales presenting Q4 results to the board. The numbers are exceptional—120% of target, highest revenue quarter in company history. But your body language is apologetic: hands in fig leaf position, shifting weight between feet, shoulders slightly hunched.',
+                question: 'The CFO interrupts: "Sam, these numbers are great. But are you CONFIDENT we can replicate this in Q1?" The room goes quiet. Everyone is looking at you.',
+                situation: 'Your body is leaking doubt despite the stellar results. Emotional leakage—when suppressed feelings show through body language—is destroying your credibility. How do you physically reclaim authority?',
+                choices: [
+                    {
+                        text: 'Keep hands in fig leaf position, lean forward slightly, answer: "Absolutely. Let me walk you through our Q1 pipeline and key indicators..."',
+                        correct: false,
+                        feedback: 'Fig leaf (hands clasped in front) is self-soothing body language—it signals you need protection. Leaning forward from this position looks pleading, not confident. The board doesn\'t trust your "absolutely" because your body says you\'re uncertain. Verbal assurance without physical alignment = zero credibility.',
+                        points: 0
+                    },
+                    {
+                        text: 'Drop hands to sides, plant feet shoulder-width, lift ribs while inhaling, make direct eye contact with CFO, list 3 specific data points',
+                        correct: true,
+                        feedback: 'Perfect execution! Dropping hands eliminated the self-soothing tell. Planting feet = grounded confidence. Lifting ribs while breathing is subtle—no one notices the "power pose" but everyone FEELS the shift. Direct eye contact with the questioner (not scanning the room) showed you weren\'t intimidated. The 3 data points backed the physical reset with substance. Board members later described you as "unshakeable."',
+                        points: 30
+                    },
+                    {
+                        text: 'Cross arms across chest, smile confidently at the room, respond: "Trust me on this—Q1 will exceed your expectations. Locked down."',
+                        correct: false,
+                        feedback: 'Crossed arms with a smile is a mixed signal disaster. The smile says "confident" but crossed arms scream "defensive." Boards read body language more than words—this looks like you\'re hiding something. "Trust me" + defensive posture = instant credibility loss.',
+                        points: 0
+                    }
+                ],
+                proTip: '🌿 Emotional Leakage Detection: Self-soothing gestures (fig leaf, touching neck, wringing hands) reveal stress your words deny. Practice "power stance" until it\'s muscle memory: feet shoulder-width, hands at sides or in "steeple" position, shoulders back but not rigid. When nerves spike, BREATHE first, RESET posture second, SPEAK third.'
+            },
+            {
+                id: 'networking_fidget_male',
+                type: 'inperson',
+                icon: '🤝',
+                title: 'The Networking Fidget',
+                context: 'You\'re Casey, a startup founder at a tech conference, talking to a potential angel investor about your SaaS platform. The conversation is going well—they\'re asking good questions. But you\'re doing three nervous tics simultaneously: tapping your coffee cup every 10 seconds, shifting weight from foot to foot, running your hand through your hair every time you pause.',
+                question: 'They ask: "What\'s your runway?" Your hand is mid-way to your hair. Your weight is shifting. The cup is in your other hand, ready to tap.',
+                situation: 'Small repetitive tics destroy credibility faster than poor posture. Investors unconsciously associate fidgeting with uncertainty. How do you break the pattern without awkward self-awareness?',
+                choices: [
+                    {
+                        text: 'Continue with all three tics while answering the runway question—they probably haven\'t noticed, and suddenly stopping would draw more attention',
+                        correct: false,
+                        feedback: 'They 100% noticed. Investors are trained to spot nervous tics—it\'s part of risk assessment. Continuing the pattern while discussing runway (money) creates a subconscious link: "This founder is nervous about finances." You just undermined your own pitch without saying a word.',
+                        points: 0
+                    },
+                    {
+                        text: 'Set cup down on a nearby surface, plant both feet firmly, use "steeple" hand position with fingertips together, pause briefly, answer calmly',
+                        correct: true,
+                        feedback: 'Masterclass in self-correction! Setting the cup down eliminated the prop. Planting feet stopped the weight-shifting. The steeple hand position gave your hands something purposeful to do—it\'s a power gesture used by CEOs and politicians (Obama, Jobs, Bezos all use it). The 1-second pause reset your nervous system. Your answer about runway was delivered with the confidence of someone who has 18 months, not 6.',
+                        points: 25
+                    },
+                    {
+                        text: 'Put one hand in your pocket casually, keep holding the coffee cup in the other, answer: "We have 14 months runway..." [focus on not tapping]',
+                        correct: false,
+                        feedback: 'Hand in pocket is casual in wrong contexts—networking at conferences requires open body language. Keeping the cup while "trying not to tap" creates mental load—you\'re focused on suppression instead of the conversation. The investor noticed your attention was split. Either commit to the prop (take a deliberate sip) or eliminate it entirely.',
+                        points: 0
+                    }
+                ],
+                proTip: '🌿 Small Tics, Big Impact: Repetitive fidgeting (pen clicking, foot tapping, hair touching) signals uncertainty to observers\' mirror neurons. Large purposeful gestures BUILD credibility. When you catch yourself fidgeting: (1) Set down props, (2) Plant feet, (3) Use deliberate hand positions (steeple, hands behind back, open palms). Never try to "reduce" fidgeting—REPLACE it with intentional movement.'
+            }
+        ];
+
+        // Bonus scenario
+        const bonusScenario = {
+            id: 'casual_collision',
+            type: 'social',
+            icon: '⭐',
+            title: 'The Casual Collision',
+            context: 'You\'re Morgan at a friend\'s rooftop dinner party—casual Friday night, wine glass in hand, telling a group about your recent hiking trip in Patagonia. Mid-story, your company\'s CEO walks in. They came straight from the office. You\'re in jeans and a T-shirt.',
+            question: 'You\'re mid-sentence: "...and the sunrise at Fitz Roy was absolutely—" when you make eye contact with your CEO. They smile and start walking toward your group. You have 5 seconds.',
+            situation: 'The challenge: Shift from "party mode" to "poised professional" without looking stiff or fake. Social-professional blending is about staying authentic while elevating baseline 30%. How do you physically adapt?',
+            choices: [
+                {
+                    text: 'Immediately stop your story mid-sentence, straighten posture like standing at attention, extend hand for a formal handshake as they approach',
+                    correct: false,
+                    feedback: 'You just turned into a robot. The CEO came to a casual event—they expect relaxed energy, not an office posture. Abruptly stopping your story signaled that their presence disrupted you. Handshake at a casual party is overly formal. This read as insecurity, not professionalism.',
+                    points: 0
+                },
+                {
+                    text: 'Continue your story naturally, make brief eye contact and nod acknowledgment, finish your sentence, then turn to include them with open body language',
+                    correct: true,
+                    feedback: 'Perfect execution! Continuing your story showed confidence—you didn\'t need to perform for them. The nod acknowledged them without derailing your narrative. Finishing the sentence respected your current audience. THEN turning to include them was gracious. The key: you maintained 70% "party mode" (relaxed) + 30% "elevated" (upright posture, clear speech). This is exactly how executives blend contexts—they don\'t code-switch dramatically, they adjust incrementally.',
+                    points: 25
+                },
+                {
+                    text: 'Keep the exact same energy and volume—they\'re at a party too, they don\'t want work mode. Continue story as if nothing changed at all',
+                    correct: false,
+                    feedback: 'Ignoring their presence entirely is the opposite problem—it looks like you don\'t respect hierarchy even in social settings. The CEO doesn\'t expect formality, but they do expect acknowledgment. Your complete lack of adjustment read as either oblivious or intentionally dismissive. Neither helps your career.',
+                    points: 0
+                }
+            ],
+            proTip: '🟡 Social-Professional Blending: Stay ONE drink behind the room\'s energy level. Formula: 70% situationally appropriate + 30% elevated baseline. At casual events with senior colleagues: Keep relaxed demeanor, but improve posture 20%, speak 10% clearer, make 15% more eye contact. Never full "work mode" (stiff), never full "party mode" (sloppy).'
+        };
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function getShuffledChoices(scenarioId) {
+            if (state.shuffledChoices[scenarioId]) {
+                return state.shuffledChoices[scenarioId];
+            }
+
+            const scenario = [...scenarios, bonusScenario].find(s => s.id === scenarioId);
+            const originalChoices = scenario.choices;
+            const correctChoiceIndex = originalChoices.findIndex(c => c.correct);
+            
+            const indexedChoices = originalChoices.map((choice, idx) => ({
+                ...choice,
+                originalIndex: idx
+            }));
+            
+            const shuffled = shuffleArray(indexedChoices);
+            const newCorrectIndex = shuffled.findIndex(c => c.originalIndex === correctChoiceIndex);
+            
+            state.shuffledChoices[scenarioId] = {
+                choices: shuffled,
+                correctIndex: newCorrectIndex
+            };
+            
+            return state.shuffledChoices[scenarioId];
+        }
+
+        // ============================================
+        // ACHIEVEMENT SYSTEM
+        // ============================================
+        function checkAchievements() {
+            const achievements = [];
+            
+            // First Try Master
+            if (state.coreScore >= 88 && state.attemptCount === 1) {
+                achievements.push({
+                    id: 'first_try_master',
+                    name: 'First Try Master',
+                    icon: '🎯',
+                    description: 'Unlocked bonus scenario on first attempt'
+                });
+            }
+            
+            // Speed Demon
+            const timeSpent = (Date.now() - state.startTime) / 60000;
+            if (timeSpent < 10) {
+                achievements.push({
+                    id: 'speed_demon',
+                    name: 'Speed Demon',
+                    icon: '⚡',
+                    description: 'Completed episode in under 10 minutes'
+                });
+            }
+            
+            // Perfectionist
+            if (state.coreScore === 110) {
+                achievements.push({
+                    id: 'perfectionist',
+                    name: 'Perfectionist',
+                    icon: '💯',
+                    description: 'Scored 100% on all core scenarios'
+                });
+            }
+            
+            state.achievements = achievements;
+        }
+
+        // ============================================
+        // SOUND EFFECTS
+        // ============================================
+        const sounds = {
+            correct: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+            },
+            incorrect: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/142/142608_2615119-lq.mp3');
+                audio.volume = 0.2;
+                audio.play().catch(() => {});
+            },
+            complete: () => {
+                const audio = new Audio('https://cdn.freesound.org/previews/270/270402_5123851-lq.mp3');
+                audio.volume = 0.4;
+                audio.play().catch(() => {});
+            }
+        };
+
+        // ============================================
+        // CONFETTI
+        // ============================================
+        function triggerConfetti(type = 'default') {
+            const duration = 3000;
+            const end = Date.now() + duration;
+            
+            const colors = type === 'bonus' 
+                ? ['#00B4D8', '#4A7C59', '#D4C5B0']
+                : ['#00B4D8', '#4AC2E3', '#F8F9FA'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function startEpisode() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            state.attemptCount++;
+            saveProgress();
+            renderProgressDots();
+            renderScenario();
+        }
+        
+        // Debug function - call from console to reset everything
+        function clearAllData() {
+            localStorage.removeItem('episode2_data');
+            console.log('All Episode 2 data cleared. Refresh page to start fresh.');
+        }
+        
+        // Debug function - call from console to see current state
+        function showState() {
+            console.log('=== CURRENT STATE ===');
+            console.log('Current Scenario:', state.currentScenario);
+            console.log('Core Score:', state.coreScore);
+            console.log('Bonus Score:', state.bonusScore);
+            console.log('Attempt Count:', state.attemptCount);
+            console.log('Completed Attempts:', state.completedAttempts);
+            console.log('Bonus Unlocked:', state.bonusUnlocked);
+            console.log('Current Attempt Counted:', state.currentAttemptCounted);
+            console.log('====================');
+        }
+        
+        // Make debug functions available globally
+        window.clearEpisode2Data = clearAllData;
+        window.showEpisode2State = showState;
+        
+        // Log available debug commands
+        console.log('%c🔧 DEBUG COMMANDS AVAILABLE:', 'color: cyan; font-weight: bold');
+        console.log('  clearEpisode2Data() - Clear all saved progress');
+        console.log('  showEpisode2State() - Show current state');
+
+        function renderProgressDots() {
+            const totalScenarios = state.bonusUnlocked ? 5 : 4;
+            const dots = Array.from({length: totalScenarios}, (_, idx) => {
+                let className = 'progress-dot';
+                if (idx === state.currentScenario) className += ' active';
+                if (idx < state.currentScenario) className += ' completed';
+                return `<div class="${className}"></div>`;
+            }).join('');
+            
+            document.getElementById('progressDots').innerHTML = dots;
+        }
+
+        function updateScore(points, isBonus = false) {
+            if (isBonus) {
+                state.bonusScore += points;
+                console.log('Bonus points added:', points, '| Total bonus:', state.bonusScore);
+            } else {
+                state.coreScore += points;
+                console.log('Core points added:', points, '| Total core:', state.coreScore);
+            }
+            const total = state.coreScore + state.bonusScore;
+            const corePercentage = (state.coreScore / 110) * 100;
+            console.log('Core %:', corePercentage.toFixed(1) + '%', '| Total:', total);
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = total;
+        }
+
+        function saveProgress() {
+            localStorage.setItem('episode2_data', JSON.stringify({
+                attemptCount: state.attemptCount,
+                completedAttempts: state.completedAttempts,
+                bonusUnlocked: state.bonusUnlocked
+            }));
+        }
+
+        // ============================================
+        // SCENARIO RENDERING
+        // ============================================
+        function renderScenario() {
+            // Check if bonus should unlock
+            if (state.currentScenario === 4 && !state.bonusUnlocked) {
+                const corePercentage = (state.coreScore / 110) * 100;
+                
+                // Debug logging
+                console.log('=== UNLOCK CHECK ===');
+                console.log('Core Score:', state.coreScore);
+                console.log('Core Percentage:', corePercentage.toFixed(2) + '%');
+                console.log('Completed Attempts:', state.completedAttempts);
+                console.log('Is First Attempt:', state.completedAttempts === 0);
+                
+                // Check unlock conditions
+                const isFirstAttemptHighScore = (corePercentage >= 80 && state.completedAttempts === 0);
+                const hasCompletedBefore = state.completedAttempts >= 1;
+                
+                console.log('First Attempt High Score Path:', isFirstAttemptHighScore);
+                console.log('Completed Before Path:', hasCompletedBefore);
+                
+                if (isFirstAttemptHighScore || hasCompletedBefore) {
+                    console.log('✓ BONUS UNLOCKED!');
+                    state.bonusUnlocked = true;
+                    saveProgress();
+                    
+                    // Show unlock success message with confetti
+                    if (isFirstAttemptHighScore) {
+                        triggerConfetti('bonus');
+                    }
+                } else {
+                    console.log('✗ Bonus still locked');
+                }
+                console.log('===================');
+            }
+            
+            // Check if we should show bonus lock/unlock screen
+            if (state.currentScenario === 4 && !state.bonusUnlocked) {
+                renderBonusLockScreen();
+                return;
+            }
+            
+            // Check if we should show results
+            if (state.currentScenario >= 4 && !state.bonusUnlocked) {
+                renderResults();
+                return;
+            }
+            
+            if (state.currentScenario >= 5) {
+                renderResults();
+                return;
+            }
+
+            const scenario = state.currentScenario < 4 ? scenarios[state.currentScenario] : bonusScenario;
+            const typeBadge = scenario.type === 'virtual' 
+                ? '<span class="type-badge badge-virtual">💻 VIRTUAL</span>'
+                : scenario.type === 'inperson'
+                ? '<span class="type-badge badge-inperson">🌿 IN-PERSON</span>'
+                : '<span class="type-badge badge-social">🟡 SOCIAL BONUS</span>';
+
+            const { choices, correctIndex } = getShuffledChoices(scenario.id);
+
+            const content = `
+                <div class="animate-fade-in-up">
+                    <div class="text-center mb-8">
+                        <div class="text-6xl mb-4">${scenario.icon}</div>
+                        ${typeBadge}
+                        <h2 class="text-4xl md:text-5xl font-display font-bold mt-4 mb-2 ${scenario.type === 'virtual' ? 'gradient-text-cyan' : scenario.type === 'inperson' ? 'gradient-text-green' : 'text-amber-300'}">
+                            ${scenario.title}
+                        </h2>
+                    </div>
+
+                    <div class="glass scenario-card ${scenario.type} rounded-3xl p-8 md:p-12 mb-8">
+                        <div class="mb-6">
+                            <div class="text-sm ${scenario.type === 'virtual' ? 'text-cyan-400' : scenario.type === 'inperson' ? 'text-green-400' : 'text-amber-400'} mb-2 tracking-wider">CONTEXT</div>
+                            <p class="text-lg text-gray-300 leading-relaxed">${scenario.context}</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="text-sm ${scenario.type === 'virtual' ? 'text-cyan-400' : scenario.type === 'inperson' ? 'text-green-400' : 'text-amber-400'} mb-2 tracking-wider">THE MOMENT</div>
+                            <p class="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+                                "${scenario.question}"
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 ${scenario.type === 'virtual' ? 'border-cyan-400' : scenario.type === 'inperson' ? 'border-green-400' : 'border-amber-400'}">
+                            <div class="text-sm ${scenario.type === 'virtual' ? 'text-cyan-400' : scenario.type === 'inperson' ? 'text-green-400' : 'text-amber-400'} mb-1 tracking-wider">THE CHALLENGE</div>
+                            <p class="text-gray-300">${scenario.situation}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-center">What would you do?</h3>
+                        <div class="space-y-4" id="choicesContainer">
+                            ${choices.map((choice, displayIdx) => `
+                                <button 
+                                    onclick="handleChoice(${displayIdx}, ${correctIndex}, '${scenario.type}')"
+                                    class="choice-btn ${scenario.type} w-full text-left p-6 rounded-2xl border-2 border-slate-600 hover:border-${scenario.type === 'virtual' ? 'cyan' : scenario.type === 'inperson' ? 'green' : 'amber'}-400 transition-all"
+                                >
+                                    <div class="flex items-start gap-4">
+                                        <div class="text-2xl font-bold ${scenario.type === 'virtual' ? 'text-cyan-400' : scenario.type === 'inperson' ? 'text-green-400' : 'text-amber-400'}">${String.fromCharCode(65 + displayIdx)}</div>
+                                        <div class="flex-1 text-gray-200">${choice.text}</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div id="feedbackArea" class="hidden"></div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function renderBonusLockScreen() {
+            const corePercentage = (state.coreScore / 110) * 100;
+            const isFirstAttempt = state.completedAttempts === 0;
+            
+            const content = `
+                <div class="animate-fade-in-up text-center">
+                    <div class="lock-screen max-w-2xl mx-auto">
+                        <div class="lock-icon">🔒</div>
+                        <h2 class="text-4xl font-display font-bold mb-4">Bonus Scenario Locked</h2>
+                        <p class="text-lg text-gray-300 mb-6">
+                            You scored <strong>${state.coreScore}/110 (${corePercentage.toFixed(0)}%)</strong> on core scenarios.
+                        </p>
+                        
+                        <!-- Debug info -->
+                        <div class="text-xs text-gray-500 mb-4" style="font-family: monospace;">
+                            DEBUG: completedAttempts=${state.completedAttempts} | attemptCount=${state.attemptCount} | bonusUnlocked=${state.bonusUnlocked}
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="text-sm text-gray-400 mb-2">Unlock Requirements:</div>
+                            ${isFirstAttempt ? `
+                                <div class="analytics-bar mb-2">
+                                    <div class="analytics-fill" style="width: ${corePercentage >= 80 ? 100 : (corePercentage / 80) * 100}%"></div>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    ${corePercentage >= 80 ? '✓ Score 80%+ on first try (Elite path)' : `Score 80%+ on first try (${corePercentage.toFixed(0)}% achieved)`}
+                                </div>
+                                <div class="text-sm text-gray-400 mt-2">
+                                    OR complete episode again (Persistent path)
+                                </div>
+                            ` : `
+                                <div class="text-sm text-green-400">
+                                    ✓ You've completed the episode before!
+                                </div>
+                                <div class="text-sm text-gray-400 mt-2">
+                                    Complete once more to unlock the bonus
+                                </div>
+                            `}
+                        </div>
+
+                        <div class="space-y-4">
+                            <button 
+                                onclick="restartEpisode()"
+                                class="px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105"
+                            >
+                                ${isFirstAttempt ? 'Try Again to Unlock 🔄' : 'Complete Again to Unlock 🔄'}
+                            </button>
+                            <button 
+                                onclick="skipToResults()"
+                                class="block mx-auto px-8 py-3 rounded-full glass border border-slate-600 text-gray-300 hover:border-cyan-400 transition"
+                            >
+                                See Results Anyway →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Copyright Footer -->
+                    <div class="mt-12 text-center text-sm text-gray-500">
+                        © 2026 Forteen Studios • <a href="https://forteen.in" target="_blank" class="text-cyan-400 hover:text-cyan-300 transition">forteen.in</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // ============================================
+        // CHOICE HANDLING
+        // ============================================
+        function handleChoice(selectedDisplayIdx, correctDisplayIdx, scenarioType) {
+            const scenario = state.currentScenario < 4 ? scenarios[state.currentScenario] : bonusScenario;
+            const { choices } = getShuffledChoices(scenario.id);
+            const selectedChoice = choices[selectedDisplayIdx];
+            const isCorrect = selectedDisplayIdx === correctDisplayIdx;
+            const isBonus = state.currentScenario === 4;
+            
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            buttons.forEach((btn, idx) => {
+                if (idx === selectedDisplayIdx) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (idx === correctDisplayIdx) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                sounds.correct();
+                updateScore(selectedChoice.points, isBonus);
+                if (selectedChoice.points >= 30) {
+                    setTimeout(() => triggerConfetti(isBonus ? 'bonus' : 'default'), 500);
+                }
+            } else {
+                sounds.incorrect();
+            }
+
+            state.answers.push({
+                scenarioId: scenario.id,
+                selectedDisplayIdx: selectedDisplayIdx,
+                correct: isCorrect,
+                points: selectedChoice.points
+            });
+
+            setTimeout(() => {
+                showFeedback(selectedChoice, scenario.proTip);
+            }, 800);
+        }
+
+        function showFeedback(choice, proTip) {
+            const feedbackHTML = `
+                <div class="animate-fade-in-up glass rounded-3xl p-8 border ${choice.correct ? 'border-green-500/50' : 'border-red-500/50'} mb-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="text-4xl">${choice.correct ? '✓' : '✗'}</div>
+                        <div class="flex-1">
+                            <h4 class="text-xl font-bold mb-2 ${choice.correct ? 'text-green-400' : 'text-red-400'}">
+                                ${choice.correct ? 'Excellent Choice!' : 'Not Quite...'}
+                            </h4>
+                            <p class="text-gray-300 leading-relaxed">${choice.feedback}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-cyan-500/10 rounded-xl p-4 border-l-4 border-cyan-400 mb-6">
+                        <div class="text-sm text-cyan-400 mb-2 tracking-wider">PRO TIP</div>
+                        <p class="text-gray-300 text-sm">${proTip}</p>
+                    </div>
+
+                    <div class="text-center">
+                        <button 
+                            onclick="nextScenario()"
+                            class="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 text-white font-bold hover:opacity-90 transition-all hover:scale-105"
+                        >
+                            ${state.currentScenario < 4 ? 'Next Scenario →' : 'See Results ✨'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('feedbackArea').innerHTML = feedbackHTML;
+            document.getElementById('feedbackArea').classList.remove('hidden');
+            document.getElementById('feedbackArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextScenario() {
+            state.currentScenario++;
+            renderProgressDots();
+            renderScenario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function skipToResults() {
+            renderResults();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // RESULTS
+        // ============================================
+        function renderResults() {
+            // Increment completed attempts (for unlock tracking) - only once per attempt
+            if (state.currentScenario >= 4 && !state.currentAttemptCounted) {
+                state.completedAttempts++;
+                state.currentAttemptCounted = true;
+                saveProgress();
+            }
+            
+            checkAchievements();
+            
+            const totalScore = state.coreScore + state.bonusScore;
+            const totalPossible = state.bonusUnlocked ? 135 : 110;
+            const percentage = Math.round((totalScore / totalPossible) * 100);
+            const timeSpent = Math.round((Date.now() - state.startTime) / 60000);
+            
+            // Comparative analytics (simulated - would be real data in production)
+            const globalAverage = 68;
+            const topPercentile = 92;
+            const userPercentile = percentage >= topPercentile ? 95 : 
+                                   percentage >= globalAverage ? 75 : 50;
+            
+            let rating = '';
+            let ratingColor = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                rating = 'PRESENCE MASTERY';
+                ratingColor = 'text-cyan-400';
+                message = 'You understand body language at an elite level. Your ability to read situations and adjust physical presence is exceptional.';
+            } else if (percentage >= 70) {
+                rating = 'COMMAND AUTHORITY';
+                ratingColor = 'text-green-400';
+                message = 'Strong instincts with room to refine. You grasp the principles—now it\'s about consistent execution under pressure.';
+            } else if (percentage >= 50) {
+                rating = 'DEVELOPING PRESENCE';
+                ratingColor = 'text-amber-400';
+                message = 'You\'re building awareness of body language signals. With practice, these skills become second nature.';
+            } else {
+                rating = 'AWARENESS BUILDING';
+                ratingColor = 'text-orange-400';
+                message = 'This is your starting point. Body language mastery is learned through deliberate practice—you\'re on the path.';
+            }
+
+            const achievementBadges = state.achievements.length > 0 ? `
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-center">Achievements Unlocked</h3>
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        ${state.achievements.map(ach => `
+                            <div class="achievement-badge unlocked">
+                                <span class="text-2xl">${ach.icon}</span>
+                                <div>
+                                    <div class="font-bold">${ach.name}</div>
+                                    <div class="text-xs opacity-80">${ach.description}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : '';
+
+            const content = `
+                <div class="animate-fade-in-up text-center">
+                    <div class="mb-8">
+                        <div class="inline-block score-ring mb-6">
+                            <div class="relative z-10 text-center">
+                                <div class="text-4xl font-bold text-cyan-400">${percentage}%</div>
+                                <div class="text-xs text-gray-400">SCORE</div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-5xl font-display font-bold ${ratingColor} mb-4">
+                            ${rating}
+                        </h2>
+                        
+                        <p class="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
+                            ${message}
+                        </p>
+                    </div>
+
+                    ${achievementBadges}
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-12">
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-cyan-400">${state.coreScore}</div>
+                            <div class="text-xs text-gray-400 mt-1">CORE POINTS</div>
+                        </div>
+                        ${state.bonusUnlocked ? `
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-amber-400">${state.bonusScore}</div>
+                            <div class="text-xs text-gray-400 mt-1">BONUS POINTS</div>
+                        </div>
+                        ` : ''}
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-green-400">${state.bonusUnlocked ? 5 : 4}</div>
+                            <div class="text-xs text-gray-400 mt-1">SCENARIOS</div>
+                        </div>
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold text-beige-400">${timeSpent}</div>
+                            <div class="text-xs text-gray-400 mt-1">MINUTES</div>
+                        </div>
+                    </div>
+
+                    <!-- Comparative Analytics -->
+                    <div class="glass rounded-3xl p-8 max-w-2xl mx-auto mb-12">
+                        <h3 class="text-2xl font-bold mb-6">How You Compare</h3>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-400">You</span>
+                                <span class="text-cyan-400 font-bold">${percentage}%</span>
+                            </div>
+                            <div class="analytics-bar">
+                                <div class="analytics-fill" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-400">Global Average</span>
+                                <span class="text-gray-500">${globalAverage}%</span>
+                            </div>
+                            <div class="analytics-bar">
+                                <div class="analytics-fill" style="width: ${globalAverage}%; opacity: 0.5"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-400">Top 10%</span>
+                                <span class="text-gray-500">${topPercentile}%</span>
+                            </div>
+                            <div class="analytics-bar">
+                                <div class="analytics-fill" style="width: ${topPercentile}%; opacity: 0.5"></div>
+                            </div>
+                        </div>
+
+                        <div class="text-center pt-4 border-t border-slate-700">
+                            <div class="text-sm text-gray-400">You performed better than</div>
+                            <div class="text-4xl font-bold text-cyan-400 mt-2">${userPercentile}%</div>
+                            <div class="text-sm text-gray-400">of users globally</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Section -->
+                    <div class="glass rounded-3xl p-8 md:p-12 border border-cyan-400/30 mb-8">
+                        <div class="text-cyan-400 text-xs tracking-[0.3em] mb-3">EPISODE 2 COMPLETE</div>
+                        <h3 class="text-3xl md:text-4xl font-display font-bold gradient-text-cyan mb-4">
+                            Continue Your Journey
+                        </h3>
+                        <p class="text-gray-300 mb-6 max-w-xl mx-auto">
+                            You've mastered body language for the hybrid era. Next up: <strong>Wardrobe Intelligence</strong> 
+                            and <strong>The Voice of Authority</strong>.
+                        </p>
+                        
+                        <button 
+                            onclick="window.open('https://forteen.in', '_blank')"
+                            class="px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105 mb-4"
+                        >
+                            Explore More Episodes
+                        </button>
+                        
+                        <div class="text-xs text-gray-500">Season 1: 6 Episodes • Freemium Access</div>
+                    </div>
+
+                    <!-- Share Section -->
+                    <div class="mb-12">
+                        <p class="text-sm text-gray-400 mb-4">Share your results:</p>
+                        <div class="flex gap-4 justify-center flex-wrap">
+                            <button 
+                                onclick="shareLinkedIn()"
+                                class="share-btn px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                            >
+                                💼 LinkedIn
+                            </button>
+                            <button 
+                                onclick="shareTwitter()"
+                                class="share-btn px-6 py-3 rounded-full bg-sky-500 text-white font-semibold hover:bg-sky-600 transition"
+                            >
+                                🦠 Twitter
+                            </button>
+                            <button 
+                                onclick="copyLink()"
+                                class="share-btn px-6 py-3 rounded-full glass border border-slate-600 text-white font-semibold hover:border-cyan-400 transition"
+                            >
+                                🔗 Copy Link
+                            </button>
+                        </div>
+                    </div>
+
+                    <button 
+                        onclick="restartEpisode()"
+                        class="text-gray-400 hover:text-cyan-400 transition underline text-sm"
+                    >
+                        ← Take Episode 2 again
+                    </button>
+                    
+                    <!-- Copyright Footer -->
+                    <div class="mt-16 pt-8 border-t border-slate-700">
+                        <div class="text-center text-sm text-gray-500">
+                            © 2026 Forteen Studios • All Rights Reserved
+                        </div>
+                        <div class="text-center mt-2">
+                            <a href="https://forteen.in" target="_blank" class="text-cyan-400 hover:text-cyan-300 transition text-sm">
+                                forteen.in
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+            sounds.complete();
+            setTimeout(() => triggerConfetti('bonus'), 500);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // SOCIAL SHARING
+        // ============================================
+        function shareLinkedIn() {
+            const totalScore = state.coreScore + state.bonusScore;
+            const text = `I just scored ${totalScore} points on Episode 2: Command Without Speaking! 💼
+
+This interactive body language training from Forteen Studios covers:
+💻 Virtual presence on Zoom
+🌿 In-person authority in boardrooms
+🤝 Eliminating nervous tics
+⭐ Social-professional blending
+
+From the UNFORGETTABLE series
+
+Try it yourself:`;
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            const totalScore = state.coreScore + state.bonusScore;
+            const text = `I just scored ${totalScore} points on Episode 2: Command Without Speaking! 💼\n\nBody language training for the hybrid era from Forteen Studios.\n\nTry it:`;
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied! Share it with your network.');
+            });
+        }
+
+        function restartEpisode() {
+            // Reset current attempt state but preserve completion history
+            state.currentScenario = 0;
+            state.coreScore = 0;
+            state.bonusScore = 0;
+            state.answers = [];
+            state.shuffledChoices = {};
+            state.startTime = Date.now();
+            state.achievements = [];
+            state.currentAttemptCounted = false; // Reset for new attempt
+            // Don't reset completedAttempts or bonusUnlocked - those persist
+            
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = '0';
+            
+            // Restart the episode (will increment attemptCount)
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
