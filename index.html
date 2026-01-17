@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unforgettable | Forteen Studios</title>
+    <meta name="description" content="Executive presence training reimagined. Interactive scenarios, instant feedback, real-world skills.">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/fs_favicon_16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/fs_favicon_32.png">
+    <style>
+        :root {
+            --midnight: #0a0a0f;
+            --charcoal: #1a1520;
+            --champagne: #f4e4ba;
+            --gold: #d4af37;
+            --cream: #fefefe;
+            --rose-gold: #b76e79;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: var(--midnight);
+            color: var(--cream);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* HEADER */
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--charcoal) 0%, var(--midnight) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .logo {
+            font-size: 12px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            font-size: 56px;
+            color: var(--champagne);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .tagline {
+            font-size: 18px;
+            color: var(--champagne);
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .hero h2 {
+            font-size: 32px;
+            color: var(--champagne);
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--cream);
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            color: var(--gold);
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--champagne);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
+        }
+        
+        /* EPISODES GRID */
+        .episodes-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 42px;
+            color: var(--champagne);
+            margin-bottom: 10px;
+        }
+        
+        .section-header p {
+            font-size: 16px;
+            color: var(--cream);
+            opacity: 0.7;
+        }
+        
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .episode-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 35px;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .episode-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.08);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+        }
+        
+        .episode-card.locked {
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .episode-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .episode-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+        
+        .episode-badge.live {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+        
+        .episode-badge.soon {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+        
+        .episode-badge.coming {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cream);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .episode-number {
+            font-size: 14px;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+        }
+        
+        .episode-title {
+            font-size: 28px;
+            color: var(--champagne);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .episode-description {
+            font-size: 15px;
+            color: var(--cream);
+            opacity: 0.85;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .episode-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--champagne);
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+        
+        .episode-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .episode-btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--champagne) 100%);
+            color: var(--midnight);
+            border: none;
+            border-radius: 6px;
+            font-family: Georgia, serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .episode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .episode-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cream);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .episode-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* WAITLIST SECTION */
+        .waitlist-section {
+            max-width: 700px;
+            margin: 80px auto;
+            padding: 50px 40px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .waitlist-section h2 {
+            font-size: 36px;
+            color: var(--champagne);
+            margin-bottom: 15px;
+        }
+        
+        .waitlist-section p {
+            font-size: 16px;
+            color: var(--cream);
+            opacity: 0.85;
+            margin-bottom: 30px;
+        }
+        
+        .email-form {
+            display: flex;
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .email-form input {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            color: var(--cream);
+            font-family: Georgia, serif;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .email-form input:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .email-form button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--champagne) 100%);
+            color: var(--midnight);
+            border: none;
+            border-radius: 6px;
+            font-family: Georgia, serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .email-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        /* FOOTER */
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            margin-top: 100px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--champagne);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+        
+        .copyright {
+            font-size: 13px;
+            color: var(--cream);
+            opacity: 0.5;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 40px;
+            }
+            
+            .hero h2 {
+                font-size: 26px;
+            }
+            
+            .episodes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                gap: 30px;
+            }
+            
+            .email-form {
+                flex-direction: column;
+            }
+            
+            .waitlist-section {
+                padding: 40px 25px;
+            }
+        }
+        
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">🎬 Forteen Studios Presents</div>
+        <h1>UNFORGETTABLE</h1>
+        <p class="tagline">Executive Presence Training Reimagined</p>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero fade-in">
+        <h2>Where Professionals Become Unforgettable</h2>
+        <p>
+            Not another passive course. Interactive scenarios. Real situations. 
+            Immediate feedback from experts. 15-minute episodes that transform 
+            how you show up in high-stakes moments.
+        </p>
+        <p>
+            <strong style="color: var(--champagne);">
+                No lectures. No theory. Just real scenarios and what actually works.
+            </strong>
+        </p>
+        
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number">4</span>
+                <span class="stat-label">Episodes Live</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">15</span>
+                <span class="stat-label">Minutes Each</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Impact</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- EPISODES GRID -->
+    <section class="episodes-section">
+        <div class="section-header">
+            <h2>Season 1: Executive Essentials</h2>
+            <p>Master the fundamentals that separate unforgettable professionals from everyone else</p>
+        </div>
+
+        <div class="episodes-grid">
+            <!-- EPISODE 1 -->
+            <div class="episode-card">
+                <span class="episode-badge live">✅ Live Now</span>
+                <div class="episode-number">Episode 1</div>
+                <h3 class="episode-title">The Seven-Second Rule</h3>
+                <p class="episode-description">
+                    4 high-stakes VIP encounters. Learn what to say (and not say) when meeting 
+                    celebrities, executives, and legends—in the critical first 7 seconds.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <a href="episode1.html" class="episode-btn">Start Episode →</a>
+            </div>
+
+            <!-- EPISODE 2 -->
+            <div class="episode-card">
+                <span class="episode-badge live">✅ Live Now</span>
+                <div class="episode-number">Episode 2</div>
+                <h3 class="episode-title">Command Without Speaking</h3>
+                <p class="episode-description">
+                    Your body language is broadcasting authority—or insecurity. 4 scenarios 
+                    where micro-behaviors either build or destroy your presence.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <a href="episode2.html" class="episode-btn">Start Episode →</a>
+            </div>
+
+            <!-- EPISODE 3 -->
+            <div class="episode-card locked">
+                <span class="episode-badge soon">🔒 Launching Next Week</span>
+                <div class="episode-number">Episode 3</div>
+                <h3 class="episode-title">Wardrobe Intelligence</h3>
+                <p class="episode-description">
+                    Context beats trends. Learn when power dressing helps, when it hurts, 
+                    and how to dress for influence in 4 real professional scenarios.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <button class="episode-btn disabled">Coming Next Week</button>
+            </div>
+
+            <!-- EPISODE 4 -->
+            <div class="episode-card">
+                <span class="episode-badge live">✅ Live Now</span>
+                <div class="episode-number">Episode 4</div>
+                <h3 class="episode-title">The Voice of Authority</h3>
+                <p class="episode-description">
+                    It's not what you say—it's how you say it. Master vocal presence through 
+                    4 high-pressure communication scenarios that test tone, pace, and pause.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <a href="episode4.html" class="episode-btn">Start Episode →</a>
+            </div>
+
+            <!-- EPISODE 5 -->
+            <div class="episode-card locked">
+                <span class="episode-badge coming">🔒 January 2025</span>
+                <div class="episode-number">Episode 5</div>
+                <h3 class="episode-title">Meeting Mastery</h3>
+                <p class="episode-description">
+                    From Zoom to boardroom, client pitches to investor meetings—learn to 
+                    command attention and respect in any professional gathering.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <button class="episode-btn disabled">January 2025</button>
+            </div>
+
+            <!-- EPISODE 6 -->
+            <div class="episode-card locked">
+                <span class="episode-badge coming">🔒 January 2025</span>
+                <div class="episode-number">Episode 6</div>
+                <h3 class="episode-title">Crisis & Recovery</h3>
+                <p class="episode-description">
+                    Handle mistakes, awkward moments, and high-pressure failures with grace. 
+                    Learn the art of elegant recovery when everything goes wrong.
+                </p>
+                <div class="episode-meta">
+                    <span>⏱ 15 minutes</span>
+                    <span>🎯 4 scenarios</span>
+                </div>
+                <button class="episode-btn disabled">January 2025</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- WAITLIST -->
+    <section class="waitlist-section">
+        <h2>Get Notified</h2>
+        <p>
+            Join the waitlist to be notified when new episodes drop. 
+            Plus, get early access to Season 2 and exclusive insights.
+        </p>
+        <form class="email-form" id="waitlistForm">
+            <input 
+                type="email" 
+                placeholder="your.email@company.com" 
+                required
+                id="emailInput"
+            >
+            <button type="submit">Join Waitlist</button>
+        </form>
+        <p style="font-size: 13px; margin-top: 20px; opacity: 0.7;">
+            No spam. Just episode updates and pro tips. Unsubscribe anytime.
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://forteen.in">Forteen Studios</a>
+            <a href="https://linkedin.com/company/forteen-studios">LinkedIn</a>
+            <a href="https://instagram.com/forteen.studios">Instagram</a>
+            <a href="mailto:hello@forteen.in">Contact</a>
+        </div>
+        <p class="copyright">
+            © 2025 Forteen Studios. All rights reserved.<br>
+            Where Professionals Become Unforgettable.
+        </p>
+    </footer>
+
+    <script>
+        // Email capture
+        document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            
+            // For now, just show confirmation
+            // Later: integrate with your email service (Mailchimp, ConvertKit, etc.)
+            alert(`Thank you! We'll notify you at ${email} when new episodes drop. 🎬`);
+            document.getElementById('emailInput').value = '';
+        });
+
+        // Add fade-in animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.episode-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
