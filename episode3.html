@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wardrobe Intelligence | Episode 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-plum: #5D3A5D;
+            --rich-burgundy: #8B2D43;
+            --warm-taupe: #C9B69A;
+            --cream: #F5F3EF;
+            --charcoal: #2D2D2D;
+            --dark-bg: #1F1520;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--cream);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Intro Screen */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #1F1520 0%, #2D1F2D 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+            padding: 40px 20px;
+        }
+        
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .privacy-note {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            color: rgba(201, 182, 154, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Glass morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(201, 182, 154, 0.1);
+        }
+        
+        /* Gradient text */
+        .gradient-text-burgundy {
+            background: linear-gradient(135deg, var(--warm-taupe) 0%, var(--rich-burgundy) 50%, var(--deep-plum) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Scenario type badges */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .badge-high-stakes {
+            background: linear-gradient(135deg, #8B2D43 0%, #5D3A5D 100%);
+            color: white;
+        }
+        
+        .badge-medium-stakes {
+            background: linear-gradient(135deg, #C9B69A 0%, #8B2D43 100%);
+            color: #1F1520;
+        }
+        
+        .badge-social {
+            background: linear-gradient(135deg, #F5F3EF 0%, #C9B69A 100%);
+            color: #2D2D2D;
+        }
+        
+        /* Progress dots */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(201, 182, 154, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--warm-taupe);
+            width: 24px;
+            border-radius: 5px;
+        }
+        
+        .progress-dot.completed {
+            background: var(--rich-burgundy);
+        }
+        
+        /* Choice buttons */
+        .choice-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice-btn.high-stakes {
+            border-color: rgba(139, 45, 67, 0.4);
+        }
+        
+        .choice-btn.high-stakes:hover {
+            border-color: var(--rich-burgundy);
+        }
+        
+        .choice-btn.medium-stakes {
+            border-color: rgba(201, 182, 154, 0.4);
+        }
+        
+        .choice-btn.medium-stakes:hover {
+            border-color: var(--warm-taupe);
+        }
+        
+        .choice-btn.social {
+            border-color: rgba(245, 243, 239, 0.3);
+        }
+        
+        .choice-btn.social:hover {
+            border-color: var(--cream);
+        }
+        
+        .choice-btn.correct {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            animation: pulse 0.5s ease;
+        }
+        
+        .choice-btn.incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            animation: shake 0.4s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        /* Download button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(139, 45, 67, 0.2);
+            border: 2px solid var(--rich-burgundy);
+            border-radius: 12px;
+            color: var(--warm-taupe);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: rgba(139, 45, 67, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Lock screen */
+        .lock-screen {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(139, 45, 67, 0.3);
+            border-radius: 30px;
+            padding: 60px 40px;
+        }
+        
+        .lock-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        /* Score ring */
+        .score-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--rich-burgundy) 0deg, var(--warm-taupe) 180deg, var(--charcoal) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .score-ring::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: var(--dark-bg);
+        }
+        
+        .score-ring > div {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            padding: 0;
+        }
+        
+        .score-ring > div > div {
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .score-ring .text-4xl {
+            line-height: 0.9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .score-ring .text-xs {
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+            transform: translateY(-2px);
+        }
+        
+        /* Share buttons */
+        .share-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* Analytics bar */
+        .analytics-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .analytics-fill {
+            background: linear-gradient(90deg, var(--rich-burgundy) 0%, var(--warm-taupe) 100%);
+            height: 100%;
+            transition: width 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cinematic Intro -->
+    <div id="introScreen" class="intro-screen">
+        <div class="text-center animate-fade-in-up">
+            <div style="color: var(--warm-taupe);" class="text-xs tracking-[0.3em] mb-4">FORTEEN STUDIOS PRESENTS</div>
+            <div class="text-6xl mb-4">👔</div>
+            <h1 class="text-6xl md:text-8xl font-display font-bold gradient-text-burgundy mb-6">
+                WARDROBE<br>INTELLIGENCE
+            </h1>
+            <div class="text-gray-400 text-sm mb-2">EPISODE 3 • STYLE CONTEXT MASTERY</div>
+            <div class="text-xs text-gray-500 mb-8">4 Core Scenarios + Bonus • 15 minutes • Interactive</div>
+            <button onclick="startEpisode()" class="px-10 py-4 rounded-full text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105" style="background: linear-gradient(135deg, var(--rich-burgundy) 0%, var(--deep-plum) 100%);">
+                BEGIN EPISODE 3 ✨
+            </button>
+        </div>
+        
+        <div class="privacy-note">
+            🔒 Privacy: Your responses are processed locally in your browser. We do not collect, store, or transmit your personal data. Downloaded results are saved only to your device.
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="py-6 px-4 backdrop-blur-lg bg-black/30 sticky top-0 z-50" style="border-bottom: 1px solid rgba(139, 45, 67, 0.2);">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div>
+                    <div class="text-xs tracking-[0.3em] mb-1" style="color: var(--warm-taupe);">FORTEEN STUDIOS</div>
+                    <div class="font-display text-lg font-bold">Wardrobe Intelligence</div>
+                </div>
+                <div id="scoreDisplay" class="text-right">
+                    <div class="text-2xl font-bold" style="color: var(--warm-taupe);">0</div>
+                    <div class="text-xs text-gray-400">POINTS</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress -->
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div id="progressDots" class="progress-dots"></div>
+        </div>
+
+        <!-- Content Area -->
+        <main id="contentArea" class="max-w-6xl mx-auto px-4 py-8 pb-20">
+            <!-- Dynamic content loads here -->
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            currentScenario: 0,
+            coreScore: 0,
+            bonusScore: 0,
+            answers: [],
+            startTime: Date.now(),
+            shuffledChoices: {},
+            attemptCount: 0,
+            completedAttempts: 0,
+            bonusUnlocked: false,
+            achievements: [],
+            currentAttemptCounted: false
+        };
+
+        // Load saved data
+        const savedData = localStorage.getItem('episode3_data');
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            state.attemptCount = parsed.attemptCount || 0;
+            state.completedAttempts = parsed.completedAttempts || 0;
+            state.bonusUnlocked = parsed.bonusUnlocked || false;
+            
+            console.log('=== LOADED FROM STORAGE ===');
+            console.log('Attempt Count:', state.attemptCount);
+            console.log('Completed Attempts:', state.completedAttempts);
+            console.log('Bonus Unlocked:', state.bonusUnlocked);
+            console.log('==========================');
+        } else {
+            console.log('No saved data found - fresh start');
+        }
+
+        // ============================================
+        // SCENARIOS DATA
+        // ============================================
+        const scenarios = [
+            {
+                id: 'investor_pitch_female',
+                type: 'high-stakes',
+                icon: '💰',
+                title: 'The Investor Pitch',
+                context: 'You\'re Sofia Chen, founder of NovaTech, an AI healthcare startup. Tomorrow you\'re pitching to Sterling Capital Partners, a conservative VC firm known for funding traditional industries. Your co-founder suggests wearing your signature style—bold colors, statement jewelry, creative flair.',
+                question: 'But you\'ve heard Sterling values traditional professionalism. Their portfolio companies all have CEOs who dress conservatively. This pitch could secure your Series A.',
+                situation: 'Your brand is innovative and disruptive. But will dressing creatively make them question your business acumen? Or will conforming too much make you forgettable?',
+                choices: [
+                    {
+                        text: 'Go full traditional: Navy tailored suit, minimal jewelry, classic pumps, conservative styling. Blend in completely with their world.',
+                        correct: false,
+                        feedback: 'You secured a follow-up meeting, but they didn\'t remember you distinctly. Sterling sees 50+ pitches monthly. Playing it too safe made you forgettable—exactly what you can\'t afford as a disruptor. The best founders adapt without disappearing. You needed one signature element.',
+                        points: 0
+                    },
+                    {
+                        text: 'Smart adaptation: Tailored charcoal suit with one distinctive element—your signature watch or a bold but elegant scarf. Professional foundation, memorable accent.',
+                        correct: true,
+                        feedback: 'Perfect calibration! Sterling\'s managing partner later mentioned your "confidence and polish." The suit signaled you understand their world; the signature piece signaled you\'re not afraid to stand out. This is exactly how Sara Blakely (Spanx) and Whitney Wolfe Herd (Bumble) navigated conservative investor rooms.',
+                        points: 30
+                    },
+                    {
+                        text: 'Stay fully authentic: Your creative style with polished execution—bold colors, statement jewelry, distinctive aesthetic. Own your brand visually.',
+                        correct: false,
+                        feedback: 'They appreciated your authenticity but expressed "concerns about your readiness for scaling." Fair or not, appearance signaled risk. Sterling invests in proven patterns, not fashion statements. As Sophia Amoruso learned: save full expression for after funding. Adapt strategically first.',
+                        points: 0
+                    }
+                ],
+                proTip: 'Investor pitch dressing: Research their portfolio. Match their formality level but add ONE signature element. You\'re showing you can play in their world while standing out. Sara Blakely wore red shoes to every pitch.'
+            },
+            {
+                id: 'client_dinner_male',
+                type: 'medium-stakes',
+                icon: '🍽️',
+                title: 'The Client Dinner',
+                context: 'You\'re Marcus Adeyemi, a senior consultant at Apex Strategy Group. Tonight\'s dinner is with executives from Yamamoto Industries, a Japanese manufacturing firm. The email said "business casual." Your colleague interprets this as "smart jeans," but you\'ve heard Japanese business culture skews formal.',
+                question: 'It\'s 5:30 PM. Dinner is at 7 PM. You have a blazer in your office but would need to go home for dress pants.',
+                situation: 'If you\'re too casual, you risk disrespecting their culture. If you\'re too formal, you\'ll look like you can\'t read context. The dinner could lead to a multi-million dollar contract.',
+                choices: [
+                    {
+                        text: 'Trust the email: Dark jeans, crisp button-down, leather loafers, watch. Modern business casual, exactly what they said. No blazer.',
+                        correct: false,
+                        feedback: 'Yamamoto\'s team arrived in full suits. They were polite, but you felt underdressed the entire evening. The contract went to another firm. Later you learned: Japanese clients often understate—"business casual" meant "less formal than full suit." Dark blazer would have bridged it perfectly.',
+                        points: 0
+                    },
+                    {
+                        text: 'Go home and change: Full suit (no tie), polished shoes, pocket square. Treat it as traditional business. Better overdressed than under.',
+                        correct: false,
+                        feedback: 'You matched their formality perfectly, but arrived 20 minutes late due to the detour home. In Japanese business culture, punctuality is sacred. The matching attire couldn\'t overcome the tardiness. Your manager later noted: "The blazer in your office would\'ve been enough."',
+                        points: 0
+                    },
+                    {
+                        text: 'Middle ground: Dark dress pants, button-down, blazer from office, leather shoes. Elevated business casual that shows respect without full formality. Arrive on time.',
+                        correct: true,
+                        feedback: 'Spot on! You matched their level (they wore suits but removed ties). Your attire showed cultural awareness—you elevated beyond the invitation. Yamamoto\'s CFO mentioned your "respect for protocol." This is exactly what global consultants do—interpret invitations through cultural lenses, not literally.',
+                        points: 25
+                    }
+                ],
+                proTip: 'International client dinners: Research their business culture, then dress one level up from the stated code. Asian and European clients often understate formality. When in doubt, add a blazer.'
+            },
+            {
+                id: 'conference_keynote_female',
+                type: 'medium-stakes',
+                icon: '🎤',
+                title: 'The Conference Keynote',
+                context: 'You\'re Elena Rodriguez, speaking at Summit Global Ventures\' annual conference. 500+ industry professionals. You\'re giving the closing keynote on "The Future of Leadership." Most speakers wore dark suits. You\'re known for your distinctive style—you literally wrote a LinkedIn article about "bringing your authentic self to work."',
+                question: 'Do you dress like every other speaker, or do you dress in a way that makes your talk unforgettable?',
+                situation: 'You need authority and credibility, but you also need to be memorable. The conference posts photos to 50,000 followers. This keynote could define your brand.',
+                choices: [
+                    {
+                        text: 'Match the room: Dark suit, minimal accessories, conservative styling. Professional uniformity. Focus on content, not appearance.',
+                        correct: false,
+                        feedback: 'Your talk was excellent—but you were visually forgettable. Conference photos showed a sea of dark suits; you blended in. Three months later, attendees remember "a great talk about leadership" but can\'t recall your name. You missed the memorability moment your content deserved.',
+                        points: 0
+                    },
+                    {
+                        text: 'Strategic distinction: Well-tailored suit in an unexpected color (burgundy, emerald, etc.), elegant accessories, polished styling. Professional but impossible to forget.',
+                        correct: true,
+                        feedback: 'Brilliant! Conference organizers used YOUR photo in their recap email. "The speaker in the burgundy suit" became how people referred to you. You had authority AND memorability. This is exactly how Sheryl Sandberg and Brené Brown operate—professional credibility with distinctive visual identity.',
+                        points: 30
+                    },
+                    {
+                        text: 'Full creative expression: Bold patterns, statement jewelry, artistic styling. Show them what "authentic self" truly means. Lead by example.',
+                        correct: false,
+                        feedback: 'The styling upstaged the content. Hallway chatter was about your outfit, not your insights. You looked like a fashion blogger, not a leadership authority. Priyanka Chopra mastersthis: distinctive style that supports the message without overwhelming it. You needed strategic distinction, not full fashion.',
+                        points: 0
+                    }
+                ],
+                proTip: 'Conference speaking: Dress distinctively but professionally. Unexpected colors work better than patterns. Your goal: Authority + Memorability. Brené Brown\'s signature leather jacket serves both.'
+            },
+            {
+                id: 'job_interview_male',
+                type: 'high-stakes',
+                icon: '💼',
+                title: 'The Job Interview',
+                context: 'You\'re James Kim, interviewing for senior roles at three different companies this week. Monday: Whitmore & Partners (investment bank). Wednesday: Arcadia Labs (tech startup). Friday: Vivid Creative Studio (design agency). Same role level, wildly different cultures.',
+                question: 'You own: 1) Traditional navy suit, 2) Smart casual (blazer + chinos), 3) Creative professional (tailored but modern). What do you wear to each?',
+                situation: 'Each company will judge your "culture fit" heavily on appearance. Choose wrong, and you\'re out regardless of qualifications. But you can\'t afford three new outfits.',
+                choices: [
+                    {
+                        text: 'Safe play across all three: Navy suit everywhere. Can\'t go wrong with traditional professional. Shows you take every opportunity seriously.',
+                        correct: false,
+                        feedback: 'Whitmore hired you. Arcadia said you felt "too corporate" for their culture. Vivid said you "didn\'t understand our brand." You won 1 out of 3. Reading each company\'s culture and adapting would\'ve opened all three doors. Professional doesn\'t mean identical.',
+                        points: 0
+                    },
+                    {
+                        text: 'Match each culture: Navy suit (Whitmore), smart casual blazer (Arcadia), creative modern (Vivid). Research their dress code online first, then adapt.',
+                        correct: true,
+                        feedback: 'All three companies advanced you to final rounds. Each interviewer mentioned "great culture fit." You demonstrated adaptability AND research skills. This is what executive recruiters call "professional intelligence"â€"understanding context matters as much as credentials. You maximized all opportunities.',
+                        points: 25
+                    },
+                    {
+                        text: 'Show authenticity everywhere: Wear your preferred style to all three. Let them accept you as you are. Companies worth joining will appreciate authenticity.',
+                        correct: false,
+                        feedback: 'Principled but strategically flawed. You got offers from companies that happened to match your style but missed others where you\'d excel. Cultural adaptation isn\'t fakeâ€"it\'s professional intelligence. Save "authenticity absolutism" for after you\'re established. Winners adapt strategically.',
+                        points: 0
+                    }
+                ],
+                proTip: 'Interview dressing: Research company culture first (check employee LinkedIn photos). Match their formality level. You\'re showing you understand context, not changing who you are. Smart adaptation ≠ selling out.'
+            }
+        ];
+
+        const bonusScenario = {
+            id: 'overdressed_crisis',
+            type: 'social',
+            icon: '😬',
+            title: 'The Overdressed Crisis',
+            context: 'You\'re Alex Dubois at a "casual networking mixer" for industry professionals. You interpreted "networking" as "business event" and wore a full suit. Everyone else is in jeans, sneakers, and hoodies. You\'re getting looks. The event has two more hours.',
+            question: 'How do you recover from this mismatch without leaving or looking defeated?',
+            situation: 'You can\'t un-overdress yourself. But you can control how you handle it. Your response will define whether this becomes a funny story or an uncomfortable memory.',
+            choices: [
+                {
+                    text: 'Lean into it with humor: "I came straight from a funeral... for business casual." Own it, make it a conversation starter, show social intelligence.',
+                    correct: true,
+                    feedback: 'Perfect recovery! You turned awkwardness into approachability. People remembered you as "confident and funny" not "the overdressed person." This is exactly what Barack Obama would do—acknowledge the mismatch with lightness, move forward. Social grace is adapting to what IS, not what should\'ve been.',
+                    points: 25
+                },
+                {
+                    text: 'Quietly adjust: Remove tie, unbutton collar, try to look more casual. Blend in as much as possible without drawing attention.',
+                    correct: false,
+                    feedback: 'You looked uncomfortable the entire night. The half-suit, half-casual look read as insecure, not adapted. People remember discomfort more than overdressing. Should\'ve either owned it confidently or used humor. The middle ground just amplified the awkwardness.',
+                    points: 0
+                },
+                {
+                    text: 'Stay quiet about it: Act like nothing\'s wrong, network normally, don\'t acknowledge the mismatch. Pretend confidence.',
+                    correct: false,
+                    feedback: 'The elephant in the room stayed in the room. People were too distracted by the incongruity to engage deeply. Acknowledging it with humor would\'ve cleared the air. Real confidence addresses reality, not ignores it. You seemed either oblivious or rigid.',
+                    points: 0
+                }
+            ],
+            proTip: 'Wardrobe recovery: When mismatched, acknowledge it with light humor immediately. Social grace is adapting to reality, not defending your choice. Make people comfortable with the situation, not yourself.'
+        };
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function getShuffledChoices(scenarioId) {
+            if (state.shuffledChoices[scenarioId]) {
+                return state.shuffledChoices[scenarioId];
+            }
+
+            const scenario = state.currentScenario < 4 
+                ? scenarios.find(s => s.id === scenarioId)
+                : bonusScenario;
+            const originalChoices = scenario.choices;
+            
+            const correctChoiceIndex = originalChoices.findIndex(c => c.correct);
+            const indexedChoices = originalChoices.map((choice, idx) => ({
+                ...choice,
+                originalIndex: idx
+            }));
+            
+            const shuffled = shuffleArray(indexedChoices);
+            const newCorrectIndex = shuffled.findIndex(c => c.originalIndex === correctChoiceIndex);
+            
+            state.shuffledChoices[scenarioId] = {
+                choices: shuffled,
+                correctIndex: newCorrectIndex
+            };
+            
+            return state.shuffledChoices[scenarioId];
+        }
+
+        function saveProgress() {
+            localStorage.setItem('episode3_data', JSON.stringify({
+                attemptCount: state.attemptCount,
+                completedAttempts: state.completedAttempts,
+                bonusUnlocked: state.bonusUnlocked
+            }));
+        }
+
+        // ============================================
+        // SOUND EFFECTS - EXCITING "RA RA" EDITION
+        // ============================================
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        
+        const sounds = {
+            correct: () => {
+                // 🎉 EXCITING SUCCESS - Upward swoosh + victory chime
+                const now = audioCtx.currentTime;
+                
+                // Swoosh up effect
+                const swoosh = audioCtx.createOscillator();
+                const swooshGain = audioCtx.createGain();
+                swoosh.connect(swooshGain);
+                swooshGain.connect(audioCtx.destination);
+                
+                swoosh.frequency.setValueAtTime(200, now);
+                swoosh.frequency.exponentialRampToValueAtTime(1000, now + 0.2);
+                swoosh.type = 'sine';
+                swooshGain.gain.setValueAtTime(0.3, now);
+                swooshGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                
+                swoosh.start(now);
+                swoosh.stop(now + 0.2);
+                
+                // Victory chord - BIG and BRIGHT
+                const chord = [523.25, 659.25, 783.99]; // C-E-G major chord
+                chord.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.frequency.value = freq;
+                    osc.type = 'triangle';
+                    
+                    const startTime = now + 0.15 + (i * 0.03);
+                    gain.gain.setValueAtTime(0.25, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.6);
+                    
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.6);
+                });
+                
+                // Sparkle finish
+                setTimeout(() => {
+                    const sparkle = audioCtx.createOscillator();
+                    const sparkleGain = audioCtx.createGain();
+                    sparkle.connect(sparkleGain);
+                    sparkleGain.connect(audioCtx.destination);
+                    
+                    const sparkleTime = audioCtx.currentTime;
+                    sparkle.frequency.value = 2000;
+                    sparkle.type = 'sine';
+                    sparkleGain.gain.setValueAtTime(0.2, sparkleTime);
+                    sparkleGain.gain.exponentialRampToValueAtTime(0.01, sparkleTime + 0.3);
+                    
+                    sparkle.start(sparkleTime);
+                    sparkle.stop(sparkleTime + 0.3);
+                }, 250);
+            },
+            
+            incorrect: () => {
+                // Gentle "oops" sound - descending tone
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.25);
+                osc.type = 'sine';
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                
+                osc.start(now);
+                osc.stop(now + 0.25);
+            },
+            
+            complete: () => {
+                // 🏆 MEGA VICTORY FANFARE - "RA RA" ENERGY!!!
+                const now = audioCtx.currentTime;
+                
+                // DRUM ROLL effect (fast pulses)
+                for (let i = 0; i < 8; i++) {
+                    const drum = audioCtx.createOscillator();
+                    const drumGain = audioCtx.createGain();
+                    drum.connect(drumGain);
+                    drumGain.connect(audioCtx.destination);
+                    
+                    drum.frequency.value = 80 + (i * 5);
+                    drum.type = 'square';
+                    
+                    const drumTime = now + (i * 0.05);
+                    drumGain.gain.setValueAtTime(0.15, drumTime);
+                    drumGain.gain.exponentialRampToValueAtTime(0.01, drumTime + 0.05);
+                    
+                    drum.start(drumTime);
+                    drum.stop(drumTime + 0.05);
+                }
+                
+                // FANFARE - Triumphant ascending melody
+                const melody = [
+                    { freq: 523.25, time: 0.4 },  // C
+                    { freq: 659.25, time: 0.5 },  // E
+                    { freq: 783.99, time: 0.6 },  // G
+                    { freq: 1046.50, time: 0.7 }  // C (octave up)
+                ];
+                
+                melody.forEach(note => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.frequency.value = note.freq;
+                    osc.type = 'triangle';
+                    
+                    const startTime = now + note.time;
+                    gain.gain.setValueAtTime(0.3, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
+                    
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.4);
+                });
+                
+                // CELEBRATION SPARKLES - Cascading high notes
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const sparkle = audioCtx.createOscillator();
+                        const sparkleGain = audioCtx.createGain();
+                        sparkle.connect(sparkleGain);
+                        sparkleGain.connect(audioCtx.destination);
+                        
+                        const sparkleTime = audioCtx.currentTime;
+                        sparkle.frequency.value = 1500 + Math.random() * 1500;
+                        sparkle.type = 'sine';
+                        
+                        sparkleGain.gain.setValueAtTime(0.15, sparkleTime);
+                        sparkleGain.gain.exponentialRampToValueAtTime(0.01, sparkleTime + 0.15);
+                        
+                        sparkle.start(sparkleTime);
+                        sparkle.stop(sparkleTime + 0.15);
+                    }, 500 + (i * 60));
+                }
+                
+                // FINAL VICTORY CHORD - Big finish!
+                setTimeout(() => {
+                    const finalChord = [523.25, 659.25, 783.99, 1046.50];
+                    finalChord.forEach(freq => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        
+                        const finalTime = audioCtx.currentTime;
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        
+                        gain.gain.setValueAtTime(0.25, finalTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, finalTime + 1.2);
+                        
+                        osc.start(finalTime);
+                        osc.stop(finalTime + 1.2);
+                    });
+                }, 1400);
+            }
+        };
+
+        // ============================================
+        // CONFETTI
+        // ============================================
+        function triggerConfetti(type = 'normal') {
+            const duration = type === 'bonus' ? 4000 : 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#8B2D43', '#C9B69A', '#F5F3EF']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#8B2D43', '#C9B69A', '#F5F3EF']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // ============================================
+        // DOWNLOAD RESULTS
+        // ============================================
+        function downloadResults() {
+            const totalPossible = state.bonusUnlocked ? 135 : 110;
+            const totalScore = state.coreScore + state.bonusScore;
+            const percentage = Math.round((totalScore / totalPossible) * 100);
+            const timeSpent = Math.round((Date.now() - state.startTime) / 60000);
+            
+            let rating = '';
+            if (percentage >= 90) rating = 'STYLE VIRTUOSO';
+            else if (percentage >= 80) rating = 'STYLE SAVVY';
+            else if (percentage >= 70) rating = 'CONTEXT CONSCIOUS';
+            else if (percentage >= 60) rating = 'DEVELOPING AWARENESS';
+            else rating = 'STYLE EXPLORER';
+            
+            let content = `═══════════════════════════════════════\n`;
+            content += `  UNFORGETTABLE - EPISODE 3 RESULTS\n`;
+            content += `  Wardrobe Intelligence\n`;
+            content += `═══════════════════════════════════════\n\n`;
+            
+            const date = new Date();
+            content += `Completed: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}\n`;
+            content += `Final Score: ${totalScore}/${totalPossible} (${percentage}%)\n`;
+            content += `Rating: ${rating}\n`;
+            content += `Time Spent: ${timeSpent} minutes\n\n`;
+            
+            content += `═══════════════════════════════════════\n`;
+            content += `YOUR DECISIONS\n`;
+            content += `═══════════════════════════════════════\n\n`;
+            
+            state.answers.forEach((answer, idx) => {
+                const scenario = idx < 4 ? scenarios[idx] : bonusScenario;
+                const choice = answer.choice;
+                
+                content += `SCENARIO ${idx + 1}: ${scenario.title}\n`;
+                content += `Your choice: ${choice.text}\n`;
+                content += `Result: ${answer.correct ? '✓' : '✗'} ${answer.correct ? 'Correct' : 'Incorrect'} (${answer.points} points)\n`;
+                content += `\nFeedback: ${choice.feedback}\n`;
+                content += `\nPro Tip: ${scenario.proTip}\n\n`;
+                content += `───────────────────────────────────────\n\n`;
+            });
+            
+            if (state.achievements.length > 0) {
+                content += `═══════════════════════════════════════\n`;
+                content += `ACHIEVEMENTS UNLOCKED\n`;
+                content += `═══════════════════════════════════════\n\n`;
+                state.achievements.forEach(achievement => {
+                    content += `✓ ${achievement}\n`;
+                });
+                content += `\n`;
+            }
+            
+            content += `═══════════════════════════════════════\n`;
+            content += `COMPARATIVE ANALYTICS\n`;
+            content += `═══════════════════════════════════════\n\n`;
+            const percentile = Math.min(95, Math.max(5, percentage - 10 + Math.random() * 20));
+            content += `Your Score: ${Math.round(percentile)}th percentile\n`;
+            content += `Global Average: 67%\n\n`;
+            
+            content += `═══════════════════════════════════════\n\n`;
+            content += `Forteen Studios\n`;
+            content += `Where Professionals Become Unforgettable\n`;
+            content += `forteen.in\n\n`;
+            content += `© 2026 Forteen Studios • All Rights Reserved\n`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Episode3_WardrobeIntelligence_${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function startEpisode() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            state.attemptCount++;
+            saveProgress();
+            renderProgressDots();
+            renderScenario();
+        }
+
+        function renderProgressDots() {
+            const dots = scenarios.map((_, idx) => {
+                let className = 'progress-dot';
+                if (idx === state.currentScenario) className += ' active';
+                if (idx < state.currentScenario) className += ' completed';
+                return `<div class="${className}"></div>`;
+            }).join('');
+            
+            document.getElementById('progressDots').innerHTML = dots;
+        }
+
+        function updateScore(points, isBonus = false) {
+            if (isBonus) {
+                state.bonusScore += points;
+                console.log('Bonus points added:', points, '| Total bonus:', state.bonusScore);
+            } else {
+                state.coreScore += points;
+                console.log('Core points added:', points, '| Total core:', state.coreScore);
+            }
+            const total = state.coreScore + state.bonusScore;
+            const corePercentage = (state.coreScore / 110) * 100;
+            console.log('Core %:', corePercentage.toFixed(1) + '%', '| Total:', total);
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = total;
+        }
+
+        // ============================================
+        // SCENARIO RENDERING
+        // ============================================
+        function renderScenario() {
+            // Check if bonus should unlock
+            if (state.currentScenario === 4 && !state.bonusUnlocked) {
+                const corePercentage = (state.coreScore / 110) * 100;
+                
+                console.log('=== UNLOCK CHECK ===');
+                console.log('Core Score:', state.coreScore);
+                console.log('Core Percentage:', corePercentage.toFixed(2) + '%');
+                console.log('Completed Attempts:', state.completedAttempts);
+                console.log('Is First Attempt:', state.completedAttempts === 0);
+                
+                const isFirstAttemptHighScore = (corePercentage >= 80 && state.completedAttempts === 0);
+                const hasCompletedBefore = state.completedAttempts >= 1;
+                
+                console.log('First Attempt High Score Path:', isFirstAttemptHighScore);
+                console.log('Completed Before Path:', hasCompletedBefore);
+                
+                if (isFirstAttemptHighScore || hasCompletedBefore) {
+                    console.log('✓ BONUS UNLOCKED!');
+                    state.bonusUnlocked = true;
+                    saveProgress();
+                    
+                    if (isFirstAttemptHighScore) {
+                        triggerConfetti('bonus');
+                    }
+                } else {
+                    console.log('✗ Bonus still locked');
+                }
+                console.log('===================');
+            }
+            
+            if (state.currentScenario === 4 && !state.bonusUnlocked) {
+                renderBonusLockScreen();
+                return;
+            }
+            
+            if (state.currentScenario >= 4 && !state.bonusUnlocked) {
+                renderResults();
+                return;
+            }
+            
+            if (state.currentScenario >= 5) {
+                renderResults();
+                return;
+            }
+
+            const scenario = state.currentScenario < 4 ? scenarios[state.currentScenario] : bonusScenario;
+            const typeBadge = scenario.type === 'high-stakes' 
+                ? '<span class="type-badge badge-high-stakes">🔥 HIGH STAKES</span>'
+                : scenario.type === 'medium-stakes'
+                ? '<span class="type-badge badge-medium-stakes">⚖️ MEDIUM STAKES</span>'
+                : '<span class="type-badge badge-social">🎭 SOCIAL BONUS</span>';
+
+            const { choices, correctIndex } = getShuffledChoices(scenario.id);
+
+            const borderColor = scenario.type === 'high-stakes' ? 'var(--rich-burgundy)' 
+                : scenario.type === 'medium-stakes' ? 'var(--warm-taupe)' 
+                : 'var(--cream)';
+
+            const content = `
+                <div class="animate-fade-in-up">
+                    <div class="text-center mb-8">
+                        <div class="text-6xl mb-4">${scenario.icon}</div>
+                        ${typeBadge}
+                        <h2 class="text-4xl md:text-5xl font-display font-bold mt-4 mb-2 gradient-text-burgundy">
+                            ${scenario.title}
+                        </h2>
+                    </div>
+
+                    <div class="glass rounded-3xl p-8 md:p-12 mb-8" style="border-color: rgba(201, 182, 154, 0.2);">
+                        <div class="mb-6">
+                            <div class="text-sm mb-2 tracking-wider" style="color: var(--warm-taupe);">CONTEXT</div>
+                            <p class="text-lg leading-relaxed" style="color: var(--cream);">${scenario.context}</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="text-sm mb-2 tracking-wider" style="color: var(--warm-taupe);">THE DILEMMA</div>
+                            <p class="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+                                "${scenario.question}"
+                            </p>
+                        </div>
+                        
+                        <div class="rounded-xl p-4" style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid ${borderColor};">
+                            <div class="text-sm mb-1 tracking-wider" style="color: ${borderColor};">THE STAKES</div>
+                            <p style="color: var(--cream);">${scenario.situation}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-center">What would you wear?</h3>
+                        <div class="space-y-4" id="choicesContainer">
+                            ${choices.map((choice, displayIdx) => `
+                                <button 
+                                    onclick="handleChoice(${displayIdx}, ${correctIndex}, '${scenario.type}')"
+                                    class="choice-btn ${scenario.type} w-full text-left p-6 rounded-2xl border-2 transition-all"
+                                    data-display-idx="${displayIdx}"
+                                    data-original-idx="${choice.originalIndex}"
+                                >
+                                    <div class="flex items-start gap-4">
+                                        <div class="text-2xl font-bold" style="color: var(--warm-taupe);">${String.fromCharCode(65 + displayIdx)}</div>
+                                        <div class="flex-1" style="color: var(--cream);">${choice.text}</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div id="feedbackArea" class="hidden"></div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function renderBonusLockScreen() {
+            const corePercentage = (state.coreScore / 110) * 100;
+            const isFirstAttempt = state.completedAttempts === 0;
+            
+            const content = `
+                <div class="animate-fade-in-up text-center">
+                    <div class="lock-screen max-w-2xl mx-auto">
+                        <div class="lock-icon">🔒</div>
+                        <h2 class="text-4xl font-display font-bold mb-4">Bonus Scenario Locked</h2>
+                        <p class="text-lg mb-6" style="color: var(--cream);">
+                            You scored <strong>${state.coreScore}/110 (${corePercentage.toFixed(0)}%)</strong> on core scenarios.
+                        </p>
+                        
+                        <div class="text-xs text-gray-500 mb-4" style="font-family: monospace;">
+                            DEBUG: completedAttempts=${state.completedAttempts} | attemptCount=${state.attemptCount} | bonusUnlocked=${state.bonusUnlocked}
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="text-sm text-gray-400 mb-2">Unlock Requirements:</div>
+                            ${isFirstAttempt ? `
+                                <div class="analytics-bar mb-2">
+                                    <div class="analytics-fill" style="width: ${corePercentage >= 80 ? 100 : (corePercentage / 80) * 100}%"></div>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    ${corePercentage >= 80 ? '✓ Score 80%+ on first try (Elite path)' : `Score 80%+ on first try (${corePercentage.toFixed(0)}% achieved)`}
+                                </div>
+                                <div class="text-sm text-gray-400 mt-2">
+                                    OR complete episode again (Persistent path)
+                                </div>
+                            ` : `
+                                <div class="text-sm text-green-400">
+                                    ✓ You've completed the episode before!
+                                </div>
+                                <div class="text-sm text-gray-400 mt-2">
+                                    Complete once more to unlock the bonus
+                                </div>
+                            `}
+                        </div>
+
+                        <div class="space-y-4">
+                            <button 
+                                onclick="restartEpisode()"
+                                class="px-10 py-4 rounded-full text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105"
+                                style="background: linear-gradient(135deg, var(--rich-burgundy) 0%, var(--deep-plum) 100%);"
+                            >
+                                ${isFirstAttempt ? 'Try Again to Unlock 🔄' : 'Complete Again to Unlock 🔄'}
+                            </button>
+                            <button 
+                                onclick="skipToResults()"
+                                class="block mx-auto px-8 py-3 rounded-full glass text-gray-300 transition"
+                                style="border: 1px solid rgba(201, 182, 154, 0.4);"
+                            >
+                                See Results Anyway →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 text-center text-sm text-gray-500">
+                        © 2026 Forteen Studios • <a href="https://forteen.in" target="_blank" class="hover:opacity-70 transition" style="color: var(--warm-taupe);">forteen.in</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // ============================================
+        // CHOICE HANDLING
+        // ============================================
+        function handleChoice(selectedDisplayIdx, correctDisplayIdx, scenarioType) {
+            const scenario = state.currentScenario < 4 ? scenarios[state.currentScenario] : bonusScenario;
+            const { choices } = getShuffledChoices(scenario.id);
+            const selectedChoice = choices[selectedDisplayIdx];
+            const isCorrect = selectedDisplayIdx === correctDisplayIdx;
+            const isBonus = state.currentScenario === 4;
+            
+            const buttons = document.querySelectorAll('.choice-btn');
+            
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            buttons.forEach((btn, idx) => {
+                if (idx === selectedDisplayIdx) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (idx === correctDisplayIdx) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                sounds.correct();
+                updateScore(selectedChoice.points, isBonus);
+                if (selectedChoice.points >= 30) {
+                    setTimeout(triggerConfetti, 500);
+                }
+            } else {
+                sounds.incorrect();
+            }
+
+            state.answers.push({
+                scenarioId: scenario.id,
+                selectedDisplayIdx: selectedDisplayIdx,
+                correct: isCorrect,
+                points: selectedChoice.points,
+                choice: selectedChoice
+            });
+
+            setTimeout(() => {
+                showFeedback(selectedChoice, scenario.proTip, scenarioType);
+            }, 800);
+        }
+
+        function showFeedback(choice, proTip, scenarioType) {
+            const borderColor = scenarioType === 'high-stakes' ? 'var(--rich-burgundy)' 
+                : scenarioType === 'medium-stakes' ? 'var(--warm-taupe)' 
+                : 'var(--cream)';
+                
+            const feedbackHTML = `
+                <div class="animate-fade-in-up glass rounded-3xl p-8 mb-8" style="border: 2px solid ${choice.correct ? '#10b981' : '#ef4444'};">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="text-4xl">${choice.correct ? '✓' : '✗'}</div>
+                        <div class="flex-1">
+                            <h4 class="text-xl font-bold mb-2" style="color: ${choice.correct ? '#34d399' : '#f87171'};">
+                                ${choice.correct ? 'Excellent Choice!' : 'Not Quite...'}
+                            </h4>
+                            <p class="leading-relaxed" style="color: var(--cream);">${choice.feedback}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="rounded-xl p-4 mb-6" style="background: rgba(201, 182, 154, 0.1); border-left: 4px solid ${borderColor};">
+                        <div class="text-sm mb-2 tracking-wider" style="color: ${borderColor};">💎 PRO TIP</div>
+                        <p class="text-sm" style="color: var(--cream);">${proTip}</p>
+                    </div>
+
+                    <div class="text-center">
+                        <button 
+                            onclick="nextScenario()"
+                            class="px-8 py-4 rounded-full text-white font-bold hover:opacity-90 transition-all hover:scale-105"
+                            style="background: linear-gradient(135deg, var(--rich-burgundy) 0%, var(--deep-plum) 100%);"
+                        >
+                            ${state.currentScenario < (state.bonusUnlocked ? 4 : 3) ? 'Next Scenario →' : 'See Results ✨'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('feedbackArea').innerHTML = feedbackHTML;
+            document.getElementById('feedbackArea').classList.remove('hidden');
+            document.getElementById('feedbackArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextScenario() {
+            state.currentScenario++;
+            renderProgressDots();
+            renderScenario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function skipToResults() {
+            renderResults();
+        }
+
+        // ============================================
+        // RESULTS
+        // ============================================
+        function renderResults() {
+            // Mark attempt as completed
+            if (!state.currentAttemptCounted) {
+                state.completedAttempts++;
+                state.currentAttemptCounted = true;
+                saveProgress();
+            }
+            
+            const totalPossible = state.bonusUnlocked ? 135 : 110;
+            const totalScore = state.coreScore + state.bonusScore;
+            const percentage = Math.round((totalScore / totalPossible) * 100);
+            const timeSpent = Math.round((Date.now() - state.startTime) / 60000);
+            
+            let rating = '';
+            let ratingColor = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                rating = 'STYLE VIRTUOSO';
+                ratingColor = 'text-green-400';
+                message = 'You have exceptional wardrobe intelligence. You understand how style communicates authority, adaptability, and cultural awareness in professional contexts.';
+            } else if (percentage >= 80) {
+                rating = 'STYLE SAVVY';
+                ratingColor = 'style="color: var(--warm-taupe);"';
+                message = 'You have strong instincts for context-appropriate dressing. You understand the balance between authenticity and strategic adaptation. With refinement, you\'ll master every situation.';
+            } else if (percentage >= 70) {
+                rating = 'CONTEXT CONSCIOUS';
+                ratingColor = 'text-blue-400';
+                message = 'You\'re aware that wardrobe matters, but refinement is needed. The good news? Style intelligence is completely learnableâ€"it\'s about reading context, not spending money.';
+            } else if (percentage >= 60) {
+                rating = 'DEVELOPING AWARENESS';
+                ratingColor = 'text-yellow-400';
+                message = 'You\'re beginning to understand that appearance communicates professionally. Keep learning how different contexts require different choices. This is exactly the right starting point.';
+            } else {
+                rating = 'STYLE EXPLORER';
+                ratingColor = 'text-orange-400';
+                message = 'Great awareness that you\'re here! Wardrobe intelligence isn\'t about fashionâ€"it\'s about strategic communication. These skills are learned, not innate. You\'re in the right place.';
+            }
+
+            // Check achievements
+            const allCorrect = state.answers.filter(a => a.correct).length === state.answers.length;
+            const speedDemon = timeSpent <= 10;
+            
+            if (allCorrect && state.answers.length === (state.bonusUnlocked ? 5 : 4)) {
+                state.achievements.push('Perfectionist - All scenarios correct');
+            }
+            if (speedDemon) {
+                state.achievements.push('Speed Demon - Completed in under 10 minutes');
+            }
+            if (state.bonusUnlocked && state.completedAttempts === 1) {
+                state.achievements.push('First Try Master - Unlocked bonus on first attempt');
+            }
+
+            const content = `
+                <div class="animate-fade-in-up text-center">
+                    <div class="mb-8">
+                        <div class="inline-block score-ring mb-6">
+                            <div>
+                                <div class="text-4xl font-bold" style="color: var(--warm-taupe);">${percentage}%</div>
+                                <div class="text-xs text-gray-400">SCORE</div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-5xl font-display font-bold ${ratingColor} mb-4">
+                            ${rating}
+                        </h2>
+                        
+                        <p class="text-lg max-w-2xl mx-auto leading-relaxed" style="color: var(--cream);">
+                            ${message}
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold" style="color: var(--warm-taupe);">${totalScore}</div>
+                            <div class="text-xs text-gray-400 mt-1">POINTS EARNED</div>
+                        </div>
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold" style="color: var(--warm-taupe);">${state.answers.length}</div>
+                            <div class="text-xs text-gray-400 mt-1">SCENARIOS</div>
+                        </div>
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-3xl font-bold" style="color: var(--warm-taupe);">${timeSpent}</div>
+                            <div class="text-xs text-gray-400 mt-1">MINUTES</div>
+                        </div>
+                    </div>
+
+                    ${state.achievements.length > 0 ? `
+                    <div class="glass rounded-3xl p-6 max-w-2xl mx-auto mb-8" style="border: 1px solid rgba(201, 182, 154, 0.2);">
+                        <h3 class="text-xl font-bold mb-4" style="color: var(--warm-taupe);">🏆 Achievements Unlocked</h3>
+                        <div class="space-y-2">
+                            ${state.achievements.map(achievement => `
+                                <div class="text-sm text-gray-300">✓ ${achievement}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="glass rounded-3xl p-6 max-w-2xl mx-auto mb-8" style="border: 1px solid rgba(201, 182, 154, 0.2);">
+                        <h3 class="text-xl font-bold mb-4" style="color: var(--warm-taupe);">📊 Comparative Analytics</h3>
+                        <div class="mb-3">
+                            <div class="analytics-bar">
+                                <div class="analytics-fill" style="width: ${Math.min(95, Math.max(5, percentage))}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span style="color: var(--cream);">You: ${percentage}%</span>
+                            <span class="text-gray-400">Global Average: 67%</span>
+                        </div>
+                        <div class="text-sm mt-2" style="color: var(--warm-taupe);">
+                            You scored in the ${Math.min(95, Math.max(5, percentage - 10 + Math.random() * 20)).toFixed(0)}th percentile
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <button 
+                            onclick="downloadResults()"
+                            class="download-btn"
+                        >
+                            <span>📥</span>
+                            Download Results (TXT)
+                        </button>
+                        <div class="text-xs text-gray-500 mt-2">
+                            Save your choices and feedback locally
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-3xl p-8 md:p-12 max-w-2xl mx-auto mb-8" style="border: 1px solid rgba(139, 45, 67, 0.3);">
+                        <div class="text-xs tracking-[0.3em] mb-3" style="color: var(--warm-taupe);">COMPLETE THE SERIES</div>
+                        <h3 class="text-3xl md:text-4xl font-display font-bold gradient-text-burgundy mb-4">
+                            Season 1: Executive Essentials
+                        </h3>
+                        <p class="mb-6" style="color: var(--cream);">
+                            You've completed <strong>Episode 3 of 6</strong>. Continue building your executive presence across first impressions, body language, vocal presence, meeting mastery, and crisis management.
+                        </p>
+                        
+                        <button 
+                            onclick="window.open('https://forteen.in', '_blank')"
+                            class="px-10 py-4 rounded-full text-white font-bold text-lg hover:opacity-90 transition-all hover:scale-105 mb-4"
+                            style="background: linear-gradient(135deg, var(--rich-burgundy) 0%, var(--deep-plum) 100%);"
+                        >
+                            Explore All Episodes
+                        </button>
+                        
+                        <div class="text-xs text-gray-500">Season 1 • 6 Episodes • Freemium Access</div>
+                    </div>
+
+                    <div class="mb-12">
+                        <p class="text-sm text-gray-400 mb-4">Share your results:</p>
+                        <div class="flex gap-4 justify-center flex-wrap">
+                            <button 
+                                onclick="shareLinkedIn()"
+                                class="share-btn px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                            >
+                                <span class="mr-2">💼</span> LinkedIn
+                            </button>
+                            <button 
+                                onclick="shareTwitter()"
+                                class="share-btn px-6 py-3 rounded-full bg-sky-500 text-white font-semibold hover:bg-sky-600 transition"
+                            >
+                                <span class="mr-2">🦅</span> Twitter
+                            </button>
+                            <button 
+                                onclick="copyLink()"
+                                class="share-btn px-6 py-3 rounded-full glass text-white font-semibold transition"
+                                style="border: 1px solid rgba(201, 182, 154, 0.3);"
+                            >
+                                <span class="mr-2">🔗</span> Copy Link
+                            </button>
+                        </div>
+                    </div>
+
+                    <button 
+                        onclick="restartEpisode()"
+                        class="text-gray-400 transition underline text-sm"
+                        style="color: var(--warm-taupe);"
+                    >
+                        ← Take Episode 3 again
+                    </button>
+                    
+                    <div class="mt-16 pt-8" style="border-top: 1px solid rgba(139, 45, 67, 0.2);">
+                        <div class="text-center text-sm text-gray-500">
+                            © 2026 Forteen Studios • All Rights Reserved
+                        </div>
+                        <div class="text-center mt-2">
+                            <a href="https://forteen.in" target="_blank" class="text-sm hover:opacity-70 transition" style="color: var(--warm-taupe);">
+                                forteen.in
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = content;
+            sounds.complete();
+            setTimeout(triggerConfetti, 500);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // SOCIAL SHARING
+        // ============================================
+        function shareLinkedIn() {
+            const text = `I just scored ${state.coreScore + state.bonusScore} points on Wardrobe Intelligence! 🎯
+
+From UNFORGETTABLE Episode 3:
+• Investor pitch wardrobe strategies
+• Client dinner dress code decisions
+• Conference keynote styling
+• Job interview culture adaptation
+
+Style intelligence isn't about fashionâ€"it's about strategic communication.
+
+Try Episode 3:`;
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            const text = `I scored ${state.coreScore + state.bonusScore} points on Wardrobe Intelligence! 👔
+
+Episode 3 of UNFORGETTABLE from Forteen Studios.
+
+Style intelligence = strategic communication.
+
+Try it:`;
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied! Share it with your network.');
+            });
+        }
+
+        function restartEpisode() {
+            state.currentScenario = 0;
+            state.coreScore = 0;
+            state.bonusScore = 0;
+            state.answers = [];
+            state.shuffledChoices = {};
+            state.startTime = Date.now();
+            state.achievements = [];
+            state.currentAttemptCounted = false;
+            
+            document.getElementById('scoreDisplay').querySelector('.text-2xl').textContent = '0';
+            renderProgressDots();
+            renderScenario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // DEBUG FUNCTIONS
+        // ============================================
+        function clearAllData() {
+            localStorage.removeItem('episode3_data');
+            console.log('All Episode 3 data cleared. Refresh page to start fresh.');
+        }
+        
+        function showState() {
+            console.log('=== CURRENT STATE ===');
+            console.log('Current Scenario:', state.currentScenario);
+            console.log('Core Score:', state.coreScore);
+            console.log('Bonus Score:', state.bonusScore);
+            console.log('Attempt Count:', state.attemptCount);
+            console.log('Completed Attempts:', state.completedAttempts);
+            console.log('Bonus Unlocked:', state.bonusUnlocked);
+            console.log('Current Attempt Counted:', state.currentAttemptCounted);
+            console.log('====================');
+        }
+        
+        window.clearEpisode3Data = clearAllData;
+        window.showEpisode3State = showState;
+        
+        console.log('%c🔧 DEBUG COMMANDS AVAILABLE:', 'color: #C9B69A; font-weight: bold');
+        console.log('  clearEpisode3Data() - Clear all saved progress');
+        console.log('  showEpisode3State() - Show current state');
+    </script>
+</body>
+</html>
