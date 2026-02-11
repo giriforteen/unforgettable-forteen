@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode 2 - Command Without Speaking | Instagram Reel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .reel-container {
+            width: 1080px;
+            height: 1920px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f1419 50%, #16213e 100%);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Animated gradient overlay */
+        .gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 60px;
+        }
+
+        /* Top section */
+        .top-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #4facfe;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .episode-badge {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 88px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .subtitle {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4facfe 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        /* Middle section - Scenarios */
+        .scenarios-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(79, 172, 254, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-card:hover {
+            border-color: rgba(79, 172, 254, 0.5);
+            transform: translateX(10px);
+        }
+
+        .scenario-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .scenario-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .scenario-desc {
+            font-size: 20px;
+            color: #b8c4db;
+            line-height: 1.5;
+        }
+
+        /* Bottom section - CTA */
+        .cta-section {
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .cta-badge {
+            display: inline-block;
+            padding: 16px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .url {
+            font-size: 32px;
+            font-weight: 800;
+            color: #4facfe;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: #8b97b0;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* Decorative elements */
+        .corner-decoration {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+        }
+
+        .corner-decoration.top-left {
+            top: -200px;
+            left: -200px;
+            background: #4facfe;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: -200px;
+            right: -200px;
+            background: #a855f7;
+        }
+
+        /* Responsive for preview */
+        @media (max-width: 1200px) {
+            .reel-container {
+                width: 540px;
+                height: 960px;
+            }
+            
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .title {
+                font-size: 44px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .scenario-card {
+                padding: 20px;
+            }
+            
+            .scenario-icon {
+                font-size: 28px;
+            }
+            
+            .scenario-title {
+                font-size: 14px;
+            }
+            
+            .scenario-desc {
+                font-size: 10px;
+            }
+            
+            .url {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reel-container">
+        <!-- Decorative elements -->
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        <div class="gradient-overlay"></div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Top section -->
+            <div class="top-section">
+                <div class="brand">FORTEEN STUDIOS</div>
+                <div class="episode-badge">Episode 2</div>
+                <h1 class="title">COMMAND<br>WITHOUT<br>SPEAKING</h1>
+                <div class="subtitle">Master Body Language for Hybrid Authority</div>
+            </div>
+
+            <!-- Scenarios -->
+            <div class="scenarios-section">
+                <div class="scenario-card">
+                    <div class="scenario-icon">💻</div>
+                    <div class="scenario-title">The Zoom Authority Gap</div>
+                    <div class="scenario-desc">Stop the "Zoom slouch" that's sabotaging your executive presence</div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-icon">🤝</div>
+                    <div class="scenario-title">The Handshake Test</div>
+                    <div class="scenario-desc">First physical touch—confidence or desperation?</div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-icon">📱</div>
+                    <div class="scenario-title">The Phone Addiction Signal</div>
+                    <div class="scenario-desc">What your device habits broadcast about your priorities</div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-icon">👔</div>
+                    <div class="scenario-title">The Boardroom Power Stance</div>
+                    <div class="scenario-desc">Standing authority in high-stakes presentations</div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-section">
+                <div class="cta-badge">🎮 INTERACTIVE • 15 MINUTES</div>
+                <div class="url">forteen.in</div>
+                <div class="tagline">Where Professionals Become Unforgettable</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add fade-in animation on load
+        window.addEventListener('load', () => {
+            document.querySelector('.reel-container').style.opacity = '0';
+            document.querySelector('.reel-container').style.transition = 'opacity 0.8s ease';
+            
+            setTimeout(() => {
+                document.querySelector('.reel-container').style.opacity = '1';
+            }, 100);
+        });
+
+        // Instructions for capturing
+        console.log('📸 CAPTURE INSTRUCTIONS:');
+        console.log('1. Press F11 for fullscreen (or Cmd+Shift+F on Mac)');
+        console.log('2. Take screenshot (Windows: Win+Shift+S, Mac: Cmd+Shift+4)');
+        console.log('3. Crop to 1080x1920px if needed');
+        console.log('4. Upload to Instagram Reels');
+        console.log('');
+        console.log('💡 TIP: Screenshot looks best on 1080p+ display');
+    </script>
+</body>
+</html>
